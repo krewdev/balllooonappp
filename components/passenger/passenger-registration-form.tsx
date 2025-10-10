@@ -19,6 +19,7 @@ export function PassengerRegistrationForm() {
     password: "",
     fullName: "",
     phone: "",
+    weight: "",
     emailNotifications: true,
     smsNotifications: true,
     location: "",
@@ -114,6 +115,18 @@ export function PassengerRegistrationForm() {
                 onChange={(e) => updateFormData("phone", e.target.value)}
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="weight">Weight (kg)</Label>
+              <Input
+                id="weight"
+                type="number"
+                placeholder="70"
+                value={formData.weight}
+                onChange={(e) => updateFormData("weight", e.target.value)}
+                required
+              />
+              <p className="text-sm text-muted-foreground">Required for balloon capacity and safety planning</p>
             </div>
           </div>
 
