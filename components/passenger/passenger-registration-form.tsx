@@ -2,12 +2,13 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
+import { SimpleSelect } from "@/components/ui/simple-select"
 import { Loader2, CheckCircle2, MapPin } from "lucide-react"
 
 export function PassengerRegistrationForm() {
@@ -19,14 +20,81 @@ export function PassengerRegistrationForm() {
     password: "",
     fullName: "",
     phone: "",
+    // optional body weight in kg
+    weightKg: "",
     emailNotifications: true,
     smsNotifications: true,
     location: "",
     maxDistance: "50",
+    // selection from dropdown: could be pilot:<id> or event:<id>
+    selectedHost: "",
   })
 
   const updateFormData = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const [options, setOptions] = useState<{ value: string; label: string }[]>([])
+
+  useEffect(() => {
+    let mounted = true
+
+    async function loadHosts() {
+      try {
+        const [pRes, mRes] = await Promise.all([
+          fetch('/api/pilot/list'),
+          fetch('/api/meister/list'),
+        ])
+
+        const pilots = pRes.ok ? await pRes.json() : []
+        const meisters = mRes.ok ? await mRes.json() : []
+
+        if (!mounted) return
+
+        const opts = [] as { value: string; label: string }[]
+
+        for (const p of pilots) {
+          opts.push({ value: `pilot:${p.id}`, label: `Pilot — ${p.name}` })
+        }
+        for (const m of meisters) {
+          opts.push({ value: `event:${m.id}`, label: `Event — ${m.festival_name}` })
+        }
+
+        setOptions(opts)
+      } catch (err) {
+        console.error('Failed to load hosts', err)
+      }
+    }
+
+    loadHosts()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  const handleQrScan = (data: string) => {
+    // Expect QR payload like "pilot:<id>" or a JSON string { type: 'pilot', id: '...' }
+    if (!data) return
+
+    let pilotId: string | null = null
+
+    if (data.startsWith('pilot:')) {
+      pilotId = data.split(':')[1]
+    } else {
+      try {
+        const parsed = JSON.parse(data)
+        if (parsed?.type === 'pilot' && parsed?.id) pilotId = parsed.id
+      } catch (e) {
+        // not json, ignore
+      }
+    }
+
+    if (pilotId) {
+      const value = `pilot:${pilotId}`
+      // only set if option exists; otherwise still set so backend can resolve
+      setFormData((prev) => ({ ...prev, selectedHost: value }))
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,7 +102,16 @@ export function PassengerRegistrationForm() {
     setIsSubmitting(true)
 
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    // Submit formData along with selectedHost to backend to associate this passenger with a pilot/event
+    try {
+      await fetch('/api/passenger/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+    } catch (err) {
+      console.error('Registration submit failed', err)
+    }
 
     setIsSubmitting(false)
     setIsComplete(true)
@@ -115,6 +192,19 @@ export function PassengerRegistrationForm() {
                 required
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="weightKg">Body Weight (kg)</Label>
+              <Input
+                id="weightKg"
+                type="number"
+                placeholder="70"
+                value={formData.weightKg}
+                onChange={(e) => updateFormData("weightKg", e.target.value)}
+                min="20"
+                max="250"
+              />
+              <p className="text-sm text-muted-foreground">Optional — helps pilots plan load and safety</p>
+            </div>
           </div>
 
           {/* Location Preferences */}
@@ -146,6 +236,20 @@ export function PassengerRegistrationForm() {
               />
               <p className="text-sm text-muted-foreground">How far are you willing to travel for a balloon ride?</p>
             </div>
+          </div>
+
+          {/* Host selection */}
+          <div className="space-y-4">
+            <Label className="text-base">Connect to a Pilot or Event</Label>
+            <SimpleSelect
+              label="Select pilot or event"
+              options={options}
+              value={formData.selectedHost}
+              onChange={(v) => updateFormData('selectedHost', v)}
+              id="selectedHost"
+              required={false}
+            />
+            <p className="text-sm text-muted-foreground">Choose a pilot or event to associate your account with.</p>
           </div>
 
           {/* Notification Preferences */}
@@ -200,3 +304,6 @@ export function PassengerRegistrationForm() {
     </form>
   )
 }
+
+// --- NEW: helper hook + effects to load pilots/events and handle QR prefill ---
+

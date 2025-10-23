@@ -3,22 +3,52 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { QrCode, Calendar, Users, Bell, Settings } from "lucide-react"
 import Link from "next/link"
+import { BackButton } from "@/components/ui/back-button"
+import dynamic from 'next/dynamic'
 
-export default function PilotDashboardPage() {
-  // Mock data - would come from database
-  const pilot = {
-    name: "John Doe",
-    verificationStatus: "approved" as const,
-    subscriptionStatus: "active" as const,
-    subscriptionTier: "premium" as const,
-    qrCodeUrl: "/qr-code.png",
+const StripeOnboarding = dynamic(() => import('@/components/pilot/StripeOnboarding').then((m) => m.StripeOnboarding), { ssr: true })
+
+export default async function PilotDashboardPage() {
+  // Fetch pilot data from the development API route
+  // This keeps the page a server component and makes it easy to swap in real data later.
+  let pilot: any = null
+
+  try {
+    const res = await fetch("/api/pilot/me", { cache: "no-store" })
+    if (res.ok) {
+      pilot = await res.json()
+    }
+  } catch (err) {
+    // swallow - fallback to local mock
+    console.error("Failed to load pilot data:", err)
+  }
+
+  // Fallback mock if API isn't available
+  if (!pilot) {
+    pilot = {
+      name: "John Doe",
+      verificationStatus: "approved",
+      subscriptionStatus: "active",
+      subscriptionTier: "premium",
+      qrCodeUrl: "/qr-code.png",
+      totalFlights: 24,
+      recentActivity: [
+        { id: 1, title: "Flight to Napa Valley", subtitle: "3 passengers notified", time: "2 days ago" },
+        { id: 2, title: "Sunset Ride", subtitle: "2 passengers booked", time: "5 days ago" },
+      ],
+    }
   }
 
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="mb-8">
-        <h1 className="mb-2 text-4xl font-bold">Pilot Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, {pilot.name}</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="mb-2 text-4xl font-bold">Pilot Dashboard</h1>
+            <p className="text-muted-foreground">Welcome back, {pilot.name}</p>
+          </div>
+          <BackButton />
+        </div>
       </div>
 
       {/* Status Cards */}
@@ -111,6 +141,10 @@ export default function PilotDashboardPage() {
                 Account Settings
               </Link>
             </Button>
+            {/* Stripe onboarding tutorial */}
+            <div>
+              <StripeOnboarding />
+            </div>
           </CardContent>
         </Card>
 

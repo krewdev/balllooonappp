@@ -123,3 +123,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+.brand-image { max-height:7rem; height:7rem }
+
+
+

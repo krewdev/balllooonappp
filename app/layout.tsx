@@ -5,9 +5,12 @@ import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'FLY HOT AIR!',
+  description: 'Experience the sky with FLY HOT AIR! - connect pilots and passengers for unforgettable balloon rides',
   generator: 'v0.app',
+  icons: {
+    icon: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({

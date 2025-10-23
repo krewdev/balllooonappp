@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Pilot {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  passwordHash   String?
+  fullName       String?
+  phone          String?
+  weightKg       Int?
+  licenseNumber  String?
+  licenseExpiry  DateTime?
+  yearsExperience Int?
+  totalFlightHours Int?
+  insuranceProvider String?
+  insurancePolicyNumber String?
+  insuranceExpiry DateTime?
+  balloonRegistration String?
+  balloonCapacity Int?
+  stripeAccountId String?
+  approved       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  flights        Flight[]
+  passengers     Passenger[]
+}
+
+model Passenger {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  passwordHash String?
+  fullName  String?
+  phone     String?
+  weightKg  Int?
+  location  String?
+  maxDistance Int?
+  emailNotifications Boolean @default(true)
+  smsNotifications Boolean @default(true)
+  // Optional association to a Pilot or an Event (Meister)
+  pilotId   String?
+  pilot     Pilot?   @relation(fields: [pilotId], references: [id])
+
+  meisterId String?
+  meister   Meister? @relation(fields: [meisterId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Flight {
+  id          String   @id @default(cuid())
+  pilot       Pilot    @relation(fields: [pilotId], references: [id])
+  pilotId     String
+  title       String
+  description String?
+  date        DateTime
+  location    String
+  priceCents  Int
+  maxPassengers Int
+  stripeProductId String?
+  stripePriceId   String?
+  stripePayLink   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Meister {
+  id             String   @id @default(cuid())
+  email          String?  @unique
+  organizationName String?
+  contactName    String?
+  phone          String?
+  festivalName   String?
+  festivalLocation String?
+  festivalDate   DateTime?
+  serviceTier    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  passengers     Passenger[]
+}

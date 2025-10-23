@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Check, Loader2 } from "lucide-react"
+import { getStripe } from "@/lib/stripe-client"
 
 export function SubscriptionPlans() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly")
@@ -28,9 +29,18 @@ export function SubscriptionPlans() {
 
       const data = await response.json()
 
-      if (data.url) {
-        window.location.href = data.url
-      }
+        // Prefer redirect via stripe.js with sessionId
+        if (data.sessionId) {
+          const stripe = await getStripe()
+          if (stripe) {
+            await stripe.redirectToCheckout({ sessionId: data.sessionId })
+            return
+          }
+        }
+
+        if (data.url) {
+          window.location.href = data.url
+        }
     } catch (error) {
       console.error("[v0] Subscription error:", error)
     } finally {

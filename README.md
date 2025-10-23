@@ -14,7 +14,7 @@ Any changes you make to your deployed app will be automatically pushed to this r
 
 Your project is live at:
 
-**[https://vercel.com/battlesol/v0-balloon-booking-platform](https://vercel.com/battlesol/v0-balloon-booking-platform)**
+**https://flyinghotair.com**
 
 ## Build your app
 

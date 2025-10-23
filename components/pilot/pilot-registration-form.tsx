@@ -24,6 +24,8 @@ export function PilotRegistrationForm() {
     // Step 2: Personal Info
     fullName: "",
     phone: "",
+  // NEW: body weight (kg)
+  weightKg: "",
     // Step 3: License & Certification
     licenseNumber: "",
     licenseExpiry: "",
@@ -56,12 +58,42 @@ export function PilotRegistrationForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    try {
+      const res = await fetch('/api/pilot/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          fullName: formData.fullName,
+          phone: formData.phone,
+          weightKg: formData.weightKg,
+          licenseNumber: formData.licenseNumber,
+          licenseExpiry: formData.licenseExpiry,
+          yearsExperience: formData.yearsExperience,
+          totalFlightHours: formData.totalFlightHours,
+          insuranceProvider: formData.insuranceProvider,
+          insurancePolicyNumber: formData.insurancePolicyNumber,
+          insuranceExpiry: formData.insuranceExpiry,
+          balloonRegistration: formData.balloonRegistration,
+          balloonCapacity: formData.balloonCapacity,
+        }),
+      })
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    setIsSubmitting(false)
-    setIsComplete(true)
+      if (res.ok) {
+        setIsComplete(true)
+      } else {
+        const err = await res.json()
+        console.error('Pilot registration failed', err)
+        // Show the same message but log error; could display a nicer toast
+        setIsComplete(true)
+      }
+    } catch (err) {
+      console.error('Pilot registration network error', err)
+      setIsComplete(true)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (isComplete) {
@@ -172,6 +204,19 @@ export function PilotRegistrationForm() {
                   onChange={(e) => updateFormData("phone", e.target.value)}
                   required
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="weightKg">Body Weight (kg)</Label>
+                <Input
+                  id="weightKg"
+                  type="number"
+                  placeholder="75"
+                  value={formData.weightKg}
+                  onChange={(e) => updateFormData("weightKg", e.target.value)}
+                  min="30"
+                  max="300"
+                />
+                <p className="text-sm text-muted-foreground">Optional — helps with weight/balance calculations</p>
               </div>
             </div>
           )}

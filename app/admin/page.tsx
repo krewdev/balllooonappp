@@ -45,7 +45,7 @@ export default function AdminDashboardPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Festival Meisters</CardTitle>
+      <CardTitle className="text-sm font-medium">Total Balloonmeisters</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -83,7 +83,7 @@ export default function AdminDashboardPage() {
         <Card className="cursor-pointer transition-all hover:border-primary hover:shadow-lg">
           <CardHeader>
             <CardTitle>User Management</CardTitle>
-            <CardDescription>Manage pilots, passengers, and meisters</CardDescription>
+            <CardDescription>Manage pilots, passengers, and balloonmeisters</CardDescription>
           </CardHeader>
           <CardContent>
             <a href="/admin/users" className="text-sm font-medium text-primary hover:underline">
