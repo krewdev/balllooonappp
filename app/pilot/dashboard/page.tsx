@@ -5,6 +5,7 @@ import { QrCode, Calendar, Users, Bell, Settings } from "lucide-react"
 import Link from "next/link"
 import { BackButton } from "@/components/ui/back-button"
 import dynamic from 'next/dynamic'
+const DownloadQR = dynamic(() => import('@/components/pilot/download-qr').then((m) => m.DownloadQR), { ssr: false })
 
 const StripeOnboarding = dynamic(() => import('@/components/pilot/StripeOnboarding').then((m) => m.StripeOnboarding), { ssr: true })
 
@@ -98,15 +99,10 @@ export default async function PilotDashboardPage() {
           </CardHeader>
           <CardContent className="flex flex-col items-center">
             <div className="mb-4 rounded-lg border-2 border-primary/20 p-4">
-              <img
-                src={pilot.qrCodeUrl || "/placeholder.svg"}
-                alt="Pilot QR Code"
-                className="h-48 w-48"
-                width={200}
-                height={200}
-              />
+              {/* Use the DownloadQR client component to render and download QR */}
+              {/* pilot.id should be available from the API — fall back to 'pilot-123' */}
+              <DownloadQR pilotId={pilot.id || 'pilot-123'} />
             </div>
-            <Button variant="outline">Download QR Code</Button>
           </CardContent>
         </Card>
 
