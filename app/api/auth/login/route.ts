@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { createSession } from '@/lib/sessions'
 
 export async function POST(req: Request) {
   try {
@@ -7,17 +8,24 @@ export async function POST(req: Request) {
 
     // Simple development-only auth logic
     if (email === "pilot@example.com" && password === "pilotpass") {
-      const payload = {
-        token: "dev-token-pilot-123",
-        user: {
-          id: "pilot-123",
-          role: "pilot",
-          email: "pilot@example.com",
-          name: "John Doe",
-        },
-      }
+      const userId = "pilot-123"
+      const sessionId = createSession(userId, 'pilot')
 
-      return NextResponse.json(payload)
+      // Set HttpOnly cookie
+      const res = NextResponse.json({ ok: true, user: { id: userId, email } })
+      const cookieOptions = [
+        `session=${sessionId}`,
+        `Path=/`,
+        `HttpOnly`,
+        `SameSite=Lax`,
+        process.env.NODE_ENV === 'production' ? `Secure` : '',
+        `Max-Age=${60 * 60 * 24 * 7}`,
+      ]
+        .filter(Boolean)
+        .join('; ')
+
+      res.headers.set('Set-Cookie', cookieOptions)
+      return res
     }
 
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })

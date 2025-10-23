@@ -33,16 +33,7 @@ export default function PilotLoginPage() {
         return
       }
 
-      // Store dev token locally (development-only)
-      if (data?.token) {
-        try {
-          localStorage.setItem("dev_token", data.token)
-        } catch (e) {
-          // ignore storage errors
-        }
-      }
-
-      // Redirect to dashboard
+      // Server sets an HttpOnly session cookie on success. Redirect to dashboard.
       router.push("/pilot/dashboard")
     } catch (err) {
       setError("Network error")

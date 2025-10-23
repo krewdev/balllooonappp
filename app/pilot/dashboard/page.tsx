@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/badge"
 import { QrCode, Calendar, Users, Bell, Settings } from "lucide-react"
 import Link from "next/link"
 import { BackButton } from "@/components/ui/back-button"
+import { DownloadQR } from '@/components/pilot/download-qr'
 import dynamic from 'next/dynamic'
-const DownloadQR = dynamic(() => import('@/components/pilot/download-qr').then((m) => m.DownloadQR), { ssr: false })
 
 const StripeOnboarding = dynamic(() => import('@/components/pilot/StripeOnboarding').then((m) => m.StripeOnboarding), { ssr: true })
 
