@@ -15,11 +15,14 @@ export async function GET(request: Request) {
   }
 
   try {
-    // NOTE: Prisma client types may be out of date until you run `prisma generate`.
-    // Use a raw query to avoid type errors in the dev environment.
-    const pilots = await prisma.$queryRaw<any>`SELECT id, email, fullName, phone, createdAt FROM Pilot WHERE approved = 0 ORDER BY createdAt ASC`
+    // Use typed Prisma client now that migrations/generate have been run
+    const pilots = await (prisma as any).pilot.findMany({
+      where: { approved: false },
+      orderBy: { createdAt: 'asc' },
+      select: { id: true, email: true, fullName: true, phone: true, createdAt: true },
+    })
 
-    return NextResponse.json(pilots || [])
+    return NextResponse.json(pilots)
   } catch (err) {
     console.error('Failed to fetch pending pilots', err)
     return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 })

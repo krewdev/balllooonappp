@@ -18,8 +18,8 @@ export async function POST(request: Request) {
     const { id } = body
     if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
 
-    // NOTE: Use raw SQL to avoid TypeScript Prisma client type mismatch before `prisma generate`.
-    await prisma.$executeRaw`UPDATE Pilot SET approved = 1 WHERE id = ${id}`
+  // Use typed Prisma client to update approval status
+  await (prisma as any).pilot.update({ where: { id }, data: { approved: true } })
 
     // Optionally: send email notification to the pilot here (placeholder)
 
