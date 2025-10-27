@@ -68,6 +68,7 @@ model Flight {
   stripePayLink   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  bookings     Booking[]
 }
 
 model Meister {
@@ -83,4 +84,16 @@ model Meister {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   passengers     Passenger[]
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  flight      Flight   @relation(fields: [flightId], references: [id])
+  flightId    String
+  passenger   Passenger @relation(fields: [passengerId], references: [id])
+  passengerId String
+  status      String   @default("pending")
+  paid        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

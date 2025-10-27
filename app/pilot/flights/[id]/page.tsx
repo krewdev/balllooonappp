@@ -64,11 +64,31 @@ export default async function FlightDetailPage({ params }: Props) {
         <h3 className="font-medium">Max passengers</h3>
         <p>{flight.maxPassengers}</p>
       </div>
-
-      <div>
-        <h3 className="font-medium">Passengers</h3>
-        <p className="text-sm text-muted-foreground">Passenger booking model is not implemented; bookings appear under passenger accounts.</p>
-      </div>
+      {/* Bookings list */}
+      {await (async () => {
+        const bookings = await (prisma as any).booking.findMany({
+          where: { flightId: id },
+          include: { passenger: { select: { fullName: true, email: true } } },
+          orderBy: { createdAt: 'desc' },
+        })
+        return (
+          <div>
+            <h3 className="font-medium">Bookings ({bookings.length}/{flight.maxPassengers})</h3>
+            {bookings.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No bookings yet.</p>
+            ) : (
+              <ul className="mt-2 space-y-2">
+                {bookings.map((b: any) => (
+                  <li key={b.id} className="border rounded p-2 text-sm flex items-center justify-between">
+                    <span>{b.passenger?.fullName || 'Unnamed'} — {b.passenger?.email}</span>
+                    <span className="uppercase text-xs text-muted-foreground">{b.status}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )
+      })()}
     </div>
   )
 }

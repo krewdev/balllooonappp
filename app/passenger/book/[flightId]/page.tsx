@@ -35,13 +35,10 @@ export default function BookingPage({ params }: Props) {
     setMessage(null)
 
     try {
-      // Create or register passenger and attach to pilot via selectedHost
-      const pilotId = flight?.pilotId
-      const payload: any = { email, fullName }
-      if (pilotId) payload.selectedHost = `pilot:${pilotId}`
-      else payload.selectedHost = null
+      // Create booking (server will upsert passenger by email)
+      const payload: any = { email, fullName, flightId }
 
-      const res = await fetch('/api/passenger/register', {
+      const res = await fetch('/api/bookings/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -49,11 +46,11 @@ export default function BookingPage({ params }: Props) {
 
       const data = await res.json()
       if (res.ok && data.ok) {
-        setMessage('Booking saved — check your email for details (dev).')
+        setMessage('Booking created — check your dashboard for details.')
         // redirect to passenger dashboard
         router.push('/passenger/dashboard')
       } else {
-        setMessage('Failed to book — please try again.')
+        setMessage(data?.error || 'Failed to book — please try again.')
       }
     } catch (err) {
       setMessage('Unexpected error')
