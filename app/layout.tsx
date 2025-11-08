@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter as FontSans } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Analytics } from "@vercel/analytics/next"
  
 import { cn } from "@/lib/utils"
 import "./globals.css"
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           {children}
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )
