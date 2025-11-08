@@ -1,4 +1,7 @@
 import { PilotRegistrationForm } from "@/components/pilot/pilot-registration-form"
+import { Button } from "@/components/ui/button"
+import { Info } from "lucide-react"
+import Link from "next/link"
 
 export default function PilotRegisterPage() {
   return (
@@ -9,6 +12,14 @@ export default function PilotRegisterPage() {
           <p className="text-pretty text-muted-foreground">
             Join FLY HOT AIR! and start connecting with passengers. Complete the registration form below to get started.
           </p>
+          <div className="mt-4">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/pilot/how-it-works">
+                <Info className="mr-2 h-4 w-4" />
+                Learn How It Works
+              </Link>
+            </Button>
+          </div>
         </div>
         <PilotRegistrationForm />
       </div>

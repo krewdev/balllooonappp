@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     const cookieHeader = req.headers.get('cookie') || null
     const cookies = parseCookies(cookieHeader)
     const sessionId = cookies['session']
-    const session = getSession(sessionId)
+    const session = await getSession(sessionId)
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // Load pilot by session.userId

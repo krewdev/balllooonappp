@@ -1,161 +1,167 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Loader2, CheckCircle2, AlertCircle, Check } from 'lucide-react'
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Loader2, CheckCircle2, AlertTriangle, ExternalLink } from "lucide-react";
+import { Pilot } from "@prisma/client";
 
-export function StripeOnboarding() {
-  const [accountId, setAccountId] = useState<string | null>(null)
-  const [onboardingUrl, setOnboardingUrl] = useState<string | null>(null)
-  const [status, setStatus] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
+type StripeOnboardingProps = {
+  pilot: Pilot;
+};
 
-  const createAccount = async () => {
-    setLoading(true)
-    const res = await fetch('/api/pilot/stripe/create-account', { method: 'POST', headers: { Authorization: 'Bearer dev-token-pilot-123' } })
-    const data = await res.json()
-    setLoading(false)
-    if (data?.accountId) {
-      setAccountId(data.accountId)
-    }
-  }
+type OnboardingStatus = "loading" | "not_started" | "pending" | "complete" | "error";
 
-  const startOnboarding = async () => {
-    if (!accountId) return
-    setLoading(true)
-    const res = await fetch('/api/pilot/stripe/create-onboarding-link', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer dev-token-pilot-123' },
-      body: JSON.stringify({ accountId }),
-    })
-    const data = await res.json()
-    setLoading(false)
-    if (data?.url) {
-      setOnboardingUrl(data.url)
-      // open onboarding in a new tab for the pilot to complete
-      window.open(data.url, '_blank')
-    }
-  }
-
-  const checkStatus = async () => {
-    if (!accountId) return
-    setLoading(true)
-    const res = await fetch(`/api/pilot/stripe/account-status?accountId=${accountId}`, { headers: { Authorization: 'Bearer dev-token-pilot-123' } })
-    const data = await res.json()
-    setLoading(false)
-    setStatus(data)
-  }
+export function StripeOnboarding({ pilot }: StripeOnboardingProps) {
+  const router = useRouter();
+  const [status, setStatus] = useState<OnboardingStatus>("loading");
+  const [isActionLoading, setIsActionLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Try to load any existing account status (server will read persisted stripeAccountId)
-    const load = async () => {
-      setLoading(true)
-      const res = await fetch('/api/pilot/stripe/account-status', { headers: { Authorization: 'Bearer dev-token-pilot-123' } })
-      setLoading(false)
-      if (res.ok) {
-        const data = await res.json()
-        if (data?.id) setAccountId(data.id)
-        setStatus(data)
+    const checkStripeStatus = async () => {
+      try {
+        const res = await fetch("/api/pilot/stripe/account");
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to fetch Stripe status.");
+        }
+
+        if (!data.hasAccount) {
+          setStatus("not_started");
+        } else if (data.onboarded) {
+          setStatus("complete");
+        } else {
+          setStatus("pending");
+        }
+      } catch (err: any) {
+        setError(err.message);
+        setStatus("error");
       }
+    };
+
+    checkStripeStatus();
+  }, [pilot.stripeAccountId]);
+
+  const handleOnboarding = async () => {
+    setIsActionLoading(true);
+    setError(null);
+    try {
+      // This API route creates the account if it doesn't exist,
+      // and then returns an onboarding link.
+      const res = await fetch("/api/pilot/stripe/onboarding", {
+        method: "POST",
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to start onboarding.");
+      }
+
+      // Redirect the user to the Stripe onboarding URL
+      if (data.url) {
+        router.push(data.url);
+      } else {
+        throw new Error("Onboarding URL not found.");
+      }
+    } catch (err: any) {
+      setError(err.message);
+      setIsActionLoading(false);
     }
-    load()
-  }, [])
+  };
 
-  const stepStatus = (step: number) => {
-    // 1: account created, 2: onboarding started (we don't track url persisted here), 3: verified (charges_enabled)
-    if (step === 1) return accountId ? 'done' : 'pending'
-    if (step === 2) return accountId && !status?.charges_enabled ? 'action' : 'pending'
-    if (step === 3) return status?.charges_enabled ? 'done' : status ? 'action' : 'pending'
-    return 'pending'
-  }
-
-  const renderStatusBadge = (s: string) => {
-    if (s === 'done') return <span className="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700"><Check className="h-4 w-4"/> Done</span>
-    if (s === 'action') return <span className="inline-flex items-center gap-2 rounded-full bg-yellow-50 px-3 py-1 text-sm font-medium text-yellow-700"><AlertCircle className="h-4 w-4"/> Action Needed</span>
-    return <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700">Pending</span>
-  }
-
-  const missingRequirements = () => {
-    if (!status || !status.requirements) return []
-    const reqs = status.requirements.currently_due || []
-    return reqs
-  }
+  const renderContent = () => {
+    switch (status) {
+      case "loading":
+        return (
+          <div className="flex items-center justify-center gap-2">
+            <Loader2 className="h-5 w-5 animate-spin" />
+            <span>Checking Stripe connection...</span>
+          </div>
+        );
+      case "not_started":
+        return (
+          <>
+            <CardTitle>Connect with Stripe</CardTitle>
+            <CardDescription>
+              To receive payments for flights, you need to connect your Stripe
+              account.
+            </CardDescription>
+            <CardContent className="pt-6">
+              <Button onClick={handleOnboarding} disabled={isActionLoading}>
+                {isActionLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                Connect to Stripe
+              </Button>
+            </CardContent>
+          </>
+        );
+      case "pending":
+        return (
+          <>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-yellow-500" />
+              Onboarding Incomplete
+            </CardTitle>
+            <CardDescription>
+              Your Stripe account setup is not yet complete. Finish the process
+              to start accepting payments.
+            </CardDescription>
+            <CardContent className="pt-6">
+              <Button onClick={handleOnboarding} disabled={isActionLoading}>
+                {isActionLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : <ExternalLink className="mr-2 h-4 w-4" />}
+                Continue Onboarding
+              </Button>
+            </CardContent>
+          </>
+        );
+      case "complete":
+        return (
+          <>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-green-500" />
+              Stripe Connected
+            </CardTitle>
+            <CardDescription>
+              Your account is fully connected. You are ready to receive payments.
+            </CardDescription>
+          </>
+        );
+      case "error":
+        return (
+          <>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+              Connection Error
+            </CardTitle>
+            <CardDescription>
+              There was a problem connecting to Stripe.
+            </CardDescription>
+            <CardContent className="pt-4">
+              <p className="text-sm text-red-600">{error}</p>
+              <Button onClick={handleOnboarding} variant="secondary" className="mt-4">
+                Try Again
+              </Button>
+            </CardContent>
+          </>
+        );
+    }
+  };
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Stripe Onboarding</CardTitle>
-        <CardDescription>An easy, guided Connect onboarding for pilots</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Step 1 */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium">Step 1 — Create your Stripe Connect account</p>
-            {renderStatusBadge(stepStatus(1))}
-          </div>
-          <div className="flex gap-2 items-center">
-            <Button onClick={createAccount} disabled={!!accountId || loading}>
-              {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Creating...</> : accountId ? 'Account Created' : 'Create Account'}
-            </Button>
-            {accountId && <div className="flex items-center gap-2 text-sm"> <CheckCircle2 className="text-green-500"/> <span className="font-medium">{accountId}</span></div>}
-          </div>
-          <p className="text-sm text-muted-foreground">We will create a Stripe Connect account for you. This links your payouts and payments to your account.</p>
-        </div>
-
-        {/* Step 2 */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium">Step 2 — Complete onboarding in Stripe</p>
-            {renderStatusBadge(stepStatus(2))}
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={startOnboarding} disabled={!accountId || loading} variant={accountId ? 'default' : 'outline'}>
-              {onboardingUrl ? 'Re-open Onboarding' : 'Start Onboarding'}
-            </Button>
-            <Button onClick={() => window.open('/pilot/dashboard')} variant="ghost">Return</Button>
-          </div>
-          <p className="text-xs text-muted-foreground">The onboarding opens in a new tab. Follow Stripe's simple steps to verify identity and add a bank account. Return here when finished.</p>
-        </div>
-
-        {/* Step 3 */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium">Step 3 — Verify account setup</p>
-            {renderStatusBadge(stepStatus(3))}
-          </div>
-          <div className="flex gap-2 items-start">
-            <Button onClick={checkStatus} disabled={!accountId || loading} variant="secondary">
-              {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Checking...</> : 'Check Status'}
-            </Button>
-            <div className="flex-1">
-              {status ? (
-                <div className="rounded-md border p-3">
-                  <p className="text-sm font-medium">Account Summary</p>
-                  <p className="text-sm text-muted-foreground">Charges enabled: {status.charges_enabled ? 'Yes' : 'No'}</p>
-                  <p className="text-sm text-muted-foreground">Payouts enabled: {status.payouts_enabled ? 'Yes' : 'No'}</p>
-                  <p className="text-sm text-muted-foreground">Details submitted: {status.details_submitted ? 'Yes' : 'No'}</p>
-                  {(!status.charges_enabled || !status.payouts_enabled) && (
-                    <div className="mt-2">
-                      <p className="text-sm font-medium">Next steps</p>
-                      <ul className="list-disc pl-5 text-sm text-muted-foreground">
-                        {missingRequirements().length === 0 ? (
-                          <li>Check Stripe dashboard for required details</li>
-                        ) : (
-                          missingRequirements().map((r: string) => <li key={r}>{r}</li>)
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">No account information available yet. Create an account and complete onboarding to enable payments.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </CardContent>
+      <CardHeader>{renderContent()}</CardHeader>
     </Card>
-  )
+  );
 }

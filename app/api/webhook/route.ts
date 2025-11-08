@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { stripe } from "@/lib/stripe"
+import { prisma } from "@/lib/prisma"
 import type Stripe from "stripe"
 
 export async function POST(request: NextRequest) {
@@ -33,10 +34,21 @@ export async function POST(request: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session
         console.log("[v0] Checkout completed:", session.id)
+        const metadata = (session.metadata || {}) as Record<string, string>
+        if (metadata.type === "booking" && metadata.bookingId) {
+          try {
+            await (prisma as any).booking.update({
+              where: { id: metadata.bookingId },
+              data: { paid: true, status: "confirmed" },
+            })
+            console.log("[v0] Booking marked paid:", metadata.bookingId)
+          } catch (e) {
+            console.error("[v0] Failed to update booking on webhook:", metadata.bookingId, e)
+          }
+        }
 
-        // TODO: Update database with payment information
-        // - For pilots: Update subscription_status, stripe_customer_id, stripe_subscription_id
-        // - For meisters: Update payment_status, stripe_payment_intent_id
+        // TODO: For pilots: Update subscription_status, stripe_customer_id, stripe_subscription_id
+        // TODO: For meisters: Update payment_status, stripe_payment_intent_id
 
         break
       }

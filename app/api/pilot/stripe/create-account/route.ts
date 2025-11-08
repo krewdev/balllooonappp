@@ -1,28 +1,44 @@
 import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
+import { cookies } from 'next/headers'
+import { getSession } from '@/lib/sessions'
 
 const DEV_TOKEN = 'dev-token-pilot-123'
 
 export async function POST(req: Request) {
-  // Simple dev-only auth check; expects Authorization: Bearer <token>
-  const auth = req.headers.get('authorization')
-  if (!auth || !auth.startsWith('Bearer ') || auth.split(' ')[1] !== DEV_TOKEN) {
+  // Auth: prefer session; fallback to dev token
+  let pilotId: string | null = null
+  const cookieStore = await cookies()
+  const sessionId = cookieStore.get('session')?.value
+  const session = await getSession(sessionId)
+  if (session?.role === 'pilot') pilotId = session.userId
+  if (!pilotId) {
+    const auth = req.headers.get('authorization')
+    if (auth && auth.startsWith('Bearer ') && auth.split(' ')[1] === DEV_TOKEN) {
+      pilotId = 'pilot-123'
+    }
+  }
+  if (!pilotId) {
     return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
   }
   try {
+    // Ensure pilot exists
+    const pilot = await prisma.pilot.findUnique({ where: { id: pilotId } })
+    if (!pilot) {
+      return new NextResponse(JSON.stringify({ error: 'Pilot not found. Please complete pilot registration first.' }), { status: 404 })
+    }
+
     // Create a new Stripe Connect account (Express)
     const account = await stripe.accounts.create({
       type: 'express',
       business_type: 'individual',
     })
 
-    // Persist to a pilot record for the dev pilot id
-    // NOTE: In real app, associate with authenticated user's id
-    await prisma.pilot.upsert({
-      where: { id: 'pilot-123' },
-      update: { stripeAccountId: account.id },
-      create: { id: 'pilot-123', email: 'pilot@example.com', stripeAccountId: account.id },
+    // Persist to this pilot
+    await prisma.pilot.update({
+      where: { id: pilotId },
+      data: { stripeAccountId: account.id },
     })
 
     return NextResponse.json({ accountId: account.id })

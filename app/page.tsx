@@ -34,7 +34,7 @@ export default function HomePage() {
                 <Link href="/pilot/register">Join as Pilot</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="text-lg">
-                <Link href="/pilot/dashboard">Pilot Login</Link>
+                <Link href="/pilot/how-it-works">How It Works</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="text-lg bg-transparent">
                 <Link href="/passenger/register">Find Flights</Link>

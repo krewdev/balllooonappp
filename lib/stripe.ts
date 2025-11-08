@@ -1,11 +1,22 @@
 import Stripe from "stripe"
 
-if (!process.env.STRIPE_SECRET_KEY) {
+const SECRET = process.env.STRIPE_SECRET_KEY
+if (!SECRET) {
   throw new Error("STRIPE_SECRET_KEY is not set")
 }
+if (SECRET.startsWith("pk_")) {
+  throw new Error(
+    "STRIPE_SECRET_KEY appears to be a publishable key (starts with pk_). Use your secret key (starts with sk_)."
+  )
+}
+if (SECRET.includes("your_") || SECRET.includes("YOUR_") || SECRET.endsWith("_here")) {
+  throw new Error(
+    "STRIPE_SECRET_KEY is set to a placeholder value. Please update .env.local with your actual Stripe secret key from https://dashboard.stripe.com/test/apikeys"
+  )
+}
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-12-18.acacia",
+export const stripe = new Stripe(SECRET, {
+  apiVersion: "2025-09-30.clover",
   typescript: true,
 })
 
@@ -27,3 +38,11 @@ export const MEISTER_SERVICE_PRICES = {
   premium: 99900, // $999.00
   vip: 199900, // $1,999.00
 }
+
+// Platform fee in basis points (1% = 100 bps). Default 10% (1000 bps).
+export const PLATFORM_FEE_BPS: number = (() => {
+  const raw = process.env.PLATFORM_FEE_BPS
+  const n = raw ? Number(raw) : 1000
+  if (!Number.isFinite(n) || n < 0) return 1000
+  return Math.floor(n)
+})()

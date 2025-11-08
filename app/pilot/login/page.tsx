@@ -23,7 +23,7 @@ export default function PilotLoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, role: "pilot" }),
       })
 
       const data = await res.json()

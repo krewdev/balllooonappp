@@ -105,37 +105,16 @@ export default function MeisterDashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
+        {/* Quick Actions (hidden until features are available) */}
         <Card>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
             <CardDescription>Manage your festival coordination</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Button asChild className="w-full justify-start bg-transparent" variant="outline">
-              <Link href="/meister/pilots">
-                <Users className="mr-2 h-4 w-4" />
-                View Matched Pilots
-              </Link>
-            </Button>
-            <Button asChild className="w-full justify-start bg-transparent" variant="outline">
-              <Link href="/meister/schedule">
-                <Calendar className="mr-2 h-4 w-4" />
-                Manage Schedule
-              </Link>
-            </Button>
-            <Button asChild className="w-full justify-start bg-transparent" variant="outline">
-              <Link href="/meister/documents">
-                <FileText className="mr-2 h-4 w-4" />
-                Event Documents
-              </Link>
-            </Button>
-            <Button asChild className="w-full justify-start bg-transparent" variant="outline">
-              <Link href="/meister/settings">
-                <Settings className="mr-2 h-4 w-4" />
-                Account Settings
-              </Link>
-            </Button>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Coming soon — pilot rosters, scheduling, document management, and account settings.
+            </p>
           </CardContent>
         </Card>
 

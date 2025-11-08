@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -14,63 +14,118 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-export function PilotApprovalList() {
-  const [pilots, setPilots] = useState([
-    {
-      id: "1",
-      fullName: "John Doe",
-      email: "john@example.com",
-      phone: "+1 (555) 123-4567",
-      licenseNumber: "FAA-12345678",
-      licenseExpiry: "2026-12-31",
-      yearsExperience: 10,
-      totalFlightHours: 500,
-      insuranceProvider: "Aviation Insurance Co.",
-      insurancePolicyNumber: "POL-123456",
-      insuranceExpiry: "2026-06-30",
-      balloonRegistration: "N12345",
-      balloonCapacity: 4,
-      verificationStatus: "pending" as const,
-      submittedAt: "2025-01-05",
-    },
-    {
-      id: "2",
-      fullName: "Sarah Johnson",
-      email: "sarah@example.com",
-      phone: "+1 (555) 234-5678",
-      licenseNumber: "FAA-87654321",
-      licenseExpiry: "2027-03-15",
-      yearsExperience: 8,
-      totalFlightHours: 420,
-      insuranceProvider: "Sky Insurance Ltd.",
-      insurancePolicyNumber: "POL-789012",
-      insuranceExpiry: "2026-09-20",
-      balloonRegistration: "N67890",
-      balloonCapacity: 6,
-      verificationStatus: "pending" as const,
-      submittedAt: "2025-01-06",
-    },
-  ])
+type Pilot = {
+  id: string
+  fullName: string | null
+  email: string | null
+  phone: string | null
+  createdAt: string
+  // Client-side state for UI changes
+  verificationStatus?: "pending" | "approved" | "rejected"
+  // Add other fields from your data model that you want to display
+  licenseNumber?: string | null
+  licenseExpiry?: string | null
+  yearsExperience?: number | null
+  totalFlightHours?: number | null
+  insuranceProvider?: string | null
+  insurancePolicyNumber?: string | null
+  insuranceExpiry?: string | null
+  balloonRegistration?: string | null
+  balloonCapacity?: number | null
+}
 
+export function PilotApprovalList() {
+  const [pilots, setPilots] = useState<Pilot[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [processingId, setProcessingId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchPendingPilots = async () => {
+      setIsLoading(true)
+      setError(null)
+      try {
+        const res = await fetch("/api/admin/pilots/pending", {
+          headers: {
+            // This is for local dev convenience, can be removed if you have proper session management
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`,
+          },
+        })
+        if (!res.ok) {
+          throw new Error(`Failed to fetch: ${res.statusText}`)
+        }
+        const data = await res.json()
+        setPilots(data.map((p: Pilot) => ({ ...p, verificationStatus: "pending" })))
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An unknown error occurred")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchPendingPilots()
+  }, [])
 
   const handleApprove = async (pilotId: string) => {
     setProcessingId(pilotId)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setPilots((prev) => prev.map((p) => (p.id === pilotId ? { ...p, verificationStatus: "approved" as const } : p)))
-    setProcessingId(null)
+    setError(null)
+    try {
+      const res = await fetch("/api/admin/pilots/approve", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`,
+        },
+        body: JSON.stringify({ id: pilotId }),
+      })
+
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || "Failed to approve pilot")
+      }
+
+      // Remove the pilot from the list on successful approval
+      setPilots((prev) => prev.filter((p) => p.id !== pilotId))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unknown error occurred")
+    } finally {
+      setProcessingId(null)
+    }
   }
 
   const handleReject = async (pilotId: string) => {
     setProcessingId(pilotId)
-    // Simulate API call
+    // TODO: Implement rejection logic when the API endpoint is ready
+    console.warn("Rejection functionality not yet implemented.")
+    // Simulate API call for now and update UI
     await new Promise((resolve) => setTimeout(resolve, 1000))
     setPilots((prev) => prev.map((p) => (p.id === pilotId ? { ...p, verificationStatus: "rejected" as const } : p)))
     setProcessingId(null)
   }
 
   const pendingPilots = pilots.filter((p) => p.verificationStatus === "pending")
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+          <p>Loading pending pilots...</p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <X className="mb-2 h-8 w-8 text-destructive" />
+          <p className="text-destructive">Error: {error}</p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -86,8 +141,8 @@ export function PilotApprovalList() {
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>
-                  <CardTitle>{pilot.fullName}</CardTitle>
-                  <CardDescription>Submitted on {new Date(pilot.submittedAt).toLocaleDateString()}</CardDescription>
+                  <CardTitle>{pilot.fullName || "N/A"}</CardTitle>
+                  <CardDescription>Submitted on {new Date(pilot.createdAt).toLocaleDateString()}</CardDescription>
                 </div>
                 <Badge variant="secondary">Pending Review</Badge>
               </div>
@@ -96,13 +151,15 @@ export function PilotApprovalList() {
               <div className="mb-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <div>
                   <p className="text-sm text-muted-foreground">Contact</p>
-                  <p className="font-medium">{pilot.email}</p>
-                  <p className="text-sm">{pilot.phone}</p>
+                  <p className="font-medium">{pilot.email || "N/A"}</p>
+                  <p className="text-sm">{pilot.phone || "N/A"}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">License</p>
                   <p className="font-medium">{pilot.licenseNumber}</p>
-                  <p className="text-sm">Expires: {new Date(pilot.licenseExpiry).toLocaleDateString()}</p>
+                  <p className="text-sm">
+                    Expires: {pilot.licenseExpiry ? new Date(pilot.licenseExpiry).toLocaleDateString() : "N/A"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Experience</p>
@@ -155,7 +212,7 @@ export function PilotApprovalList() {
                         <div>
                           <p className="text-sm font-medium">License Expiry</p>
                           <p className="text-sm text-muted-foreground">
-                            {new Date(pilot.licenseExpiry).toLocaleDateString()}
+                            {pilot.licenseExpiry ? new Date(pilot.licenseExpiry).toLocaleDateString() : "N/A"}
                           </p>
                         </div>
                         <div>
@@ -177,7 +234,7 @@ export function PilotApprovalList() {
                         <div>
                           <p className="text-sm font-medium">Insurance Expiry</p>
                           <p className="text-sm text-muted-foreground">
-                            {new Date(pilot.insuranceExpiry).toLocaleDateString()}
+                            {pilot.insuranceExpiry ? new Date(pilot.insuranceExpiry).toLocaleDateString() : "N/A"}
                           </p>
                         </div>
                         <div>

@@ -1,9 +1,15 @@
 import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
-import { Analytics } from '@vercel/analytics/next'
-import './globals.css'
+import { Inter as FontSans } from "next/font/google"
+import { ThemeProvider } from "@/components/theme-provider"
+ 
+import { cn } from "@/lib/utils"
+import "./globals.css"
 
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
+ 
 export const metadata: Metadata = {
   title: 'FLY HOT AIR!',
   description: 'Experience the sky with FLY HOT AIR! - connect pilots and passengers for unforgettable balloon rides',
@@ -13,16 +19,24 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        {children}
-        <Analytics />
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

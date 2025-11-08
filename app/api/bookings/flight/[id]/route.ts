@@ -3,13 +3,14 @@ import { prisma } from '@/lib/prisma'
 import { cookies } from 'next/headers'
 import { getSession } from '@/lib/sessions'
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
+    const params = await props.params
     const { id } = params
     // auth: must be pilot and own this flight
-    const cookieStore: any = cookies()
-    const sessionId = cookieStore.get?.('session')?.value
-    const session = getSession(sessionId)
+    const cookieStore = await cookies()
+    const sessionId = cookieStore.get('session')?.value
+    const session = await getSession(sessionId)
     if (!session || session.role !== 'pilot') {
       return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 })
     }

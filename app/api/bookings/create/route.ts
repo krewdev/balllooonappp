@@ -38,14 +38,15 @@ export async function POST(req: Request) {
       where: { email },
       update: {
         fullName: fullName || undefined,
-        phone: phone || undefined,
+        phone: phone || 'no-phone',
         // link passenger to pilot for future notifications
         pilotId: flight.pilotId,
       },
       create: {
         email,
         fullName: fullName || null,
-        phone: phone || null,
+        phone: phone || 'no-phone',
+        location: '',
         pilotId: flight.pilotId,
       },
     })

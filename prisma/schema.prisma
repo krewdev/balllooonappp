@@ -36,12 +36,13 @@ model Passenger {
   email     String   @unique
   passwordHash String?
   fullName  String?
-  phone     String?
+  phone     String
   weightKg  Int?
-  location  String?
+  location  String
   maxDistance Int?
   emailNotifications Boolean @default(true)
   smsNotifications Boolean @default(true)
+  smsConsent       Boolean  @default(false)
   // Optional association to a Pilot or an Event (Meister)
   pilotId   String?
   pilot     Pilot?   @relation(fields: [pilotId], references: [id])
@@ -51,6 +52,7 @@ model Passenger {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  bookings  Booking[]
 }
 
 model Flight {
@@ -96,4 +98,16 @@ model Booking {
   paid        Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([expiresAt])
 }
