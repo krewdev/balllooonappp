@@ -12,152 +12,196 @@ import {
   QrCode,
   DollarSign,
   Shield,
-  ArrowRight
+  ArrowRight,
+  Sparkles,
+  TrendingUp,
+  Zap
 } from "lucide-react"
 
 export default function HowItWorksPage() {
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="mx-auto max-w-4xl">
-        {/* Hero Section */}
-        <div className="mb-12 text-center">
-          <Badge className="mb-4" variant="secondary">
-            <Plane className="mr-1 h-3 w-3" />
-            For Pilots
-          </Badge>
-          <h1 className="mb-4 text-4xl font-bold">How the Platform Works</h1>
-          <p className="text-lg text-muted-foreground">
-            A complete guide to managing your hot air balloon business - from registration through payment.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="container mx-auto px-4 py-16">
+        <div className="mx-auto max-w-5xl">
+          {/* Hero Section */}
+          <div className="mb-16 text-center">
+            <Badge className="mb-6 px-4 py-2 text-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">
+              <Plane className="mr-2 h-4 w-4" />
+              For Pilots
+            </Badge>
+            <h1 className="mb-6 text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              How It Works
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Your complete guide to managing a thriving hot air balloon business - 
+              from first approval to receiving payments. Simple, powerful, profitable.
+            </p>
+          </div>
 
-        {/* The Complete Workflow */}
-        <Card className="mb-12 border-2 border-primary/20">
-          <CardHeader>
-            <CardTitle className="text-2xl">The Complete Pilot Journey</CardTitle>
-            <CardDescription>
-              Here's the step-by-step process from joining the platform to receiving payment
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+          {/* Value Props - New Section */}
+          <div className="grid md:grid-cols-3 gap-6 mb-16">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+              <CardContent className="pt-6">
+                <Sparkles className="h-10 w-10 mb-4" />
+                <h3 className="font-bold text-lg mb-2">Build Your List</h3>
+                <p className="text-blue-100 text-sm">
+                  Share one QR code, build a loyal passenger database that's yours forever
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+              <CardContent className="pt-6">
+                <Zap className="h-10 w-10 mb-4" />
+                <h3 className="font-bold text-lg mb-2">You Control Access</h3>
+                <p className="text-purple-100 text-sm">
+                  No public bookings. You decide who gets notified about each flight
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-pink-500 to-pink-600 text-white">
+              <CardContent className="pt-6">
+                <TrendingUp className="h-10 w-10 mb-4" />
+                <h3 className="font-bold text-lg mb-2">Get Paid Fast</h3>
+                <p className="text-pink-100 text-sm">
+                  90% of every booking goes straight to your bank. No waiting, no hassle
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* The Complete Workflow */}
+          <Card className="mb-16 border-0 shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-white">
+              <CardTitle className="text-3xl mb-3 font-bold">Your Journey to Success</CardTitle>
+              <CardDescription className="text-blue-100 text-lg">
+                Follow these 7 simple steps from signup to your first payout
+              </CardDescription>
+            </div>
+            <CardContent className="space-y-8 p-8 bg-white">
             {/* Step 1 */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+            <div className="flex gap-4 group hover:translate-x-2 transition-transform duration-200">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-bold text-lg shadow-lg">
                 1
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Registration & Approval</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+                <h3 className="font-bold text-lg mb-2 text-gray-800">📝 Registration & Approval</h3>
+                <p className="text-sm text-gray-600 mb-2 leading-relaxed">
                   Create your pilot account by providing your credentials (license, insurance, balloon registration). 
                   An admin reviews and approves your application, typically within 24-48 hours.
                 </p>
-                <p className="text-xs text-muted-foreground italic">
-                  Location: <code>/pilot/register</code> → Admin review at <code>/admin/pilot-approvals</code>
-                </p>
+                <div className="text-xs text-muted-foreground bg-gray-50 rounded-md p-2 border-l-2 border-blue-400">
+                  <code className="text-blue-600">/pilot/register</code> → Admin review at <code className="text-blue-600">/admin/pilot-approvals</code>
+                </div>
               </div>
             </div>
 
             {/* Step 2 */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+            <div className="flex gap-4 group hover:translate-x-2 transition-transform duration-200">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white font-bold text-lg shadow-lg">
                 2
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Stripe Onboarding</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+                <h3 className="font-bold text-lg mb-2 text-gray-800">💳 Stripe Onboarding</h3>
+                <p className="text-sm text-gray-600 mb-2 leading-relaxed">
                   After approval, you'll be prompted to connect your Stripe account. This is required to receive payments. 
                   You'll complete Stripe's onboarding form (identity verification, bank account details, tax info).
                 </p>
-                <p className="text-xs text-muted-foreground italic">
-                  Location: Onboarding prompt appears in <code>/pilot/dashboard</code>
-                </p>
+                <div className="text-xs text-muted-foreground bg-gray-50 rounded-md p-2 border-l-2 border-green-400">
+                  Onboarding prompt appears in <code className="text-green-600">/pilot/dashboard</code>
+                </div>
               </div>
             </div>
 
             {/* Step 3 */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+            <div className="flex gap-4 group hover:translate-x-2 transition-transform duration-200">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-purple-600 text-white font-bold text-lg shadow-lg">
                 3
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Create Flight Listings</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+                <h3 className="font-bold text-lg mb-2 text-gray-800">✈️ Create Flight Listings</h3>
+                <p className="text-sm text-gray-600 mb-2 leading-relaxed">
                   Create flight listings with details: title, date/time, location, price, max passengers, and description. 
                   The platform automatically creates a Stripe product and payment link for your flight.
                 </p>
-                <p className="text-xs text-muted-foreground italic">
-                  Location: <code>/pilot/flights/new</code> → View all at <code>/pilot/flights</code>
-                </p>
+                <div className="text-xs text-muted-foreground bg-gray-50 rounded-md p-2 border-l-2 border-purple-400">
+                  <code className="text-purple-600">/pilot/flights/new</code> → View all at <code className="text-purple-600">/pilot/flights</code>
+                </div>
               </div>
             </div>
 
             {/* Step 4 */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+            <div className="flex gap-4 group hover:translate-x-2 transition-transform duration-200">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-pink-600 text-white font-bold text-lg shadow-lg">
                 4
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Passengers Book & Pay (Notification-Only)</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  <strong className="text-primary">Important:</strong> Flights can ONLY be booked through SMS notifications you send. 
-                  There's no public flight browsing. Passengers receive your SMS notification with a unique booking link, 
+                <h3 className="font-bold text-lg mb-2 text-gray-800">🔒 Passengers Book & Pay (Notification-Only)</h3>
+                <div className="bg-pink-50 border-l-4 border-pink-500 p-3 mb-3 rounded">
+                  <p className="text-sm font-semibold text-pink-900 mb-1">🔔 Important: You Control Access!</p>
+                  <p className="text-sm text-pink-800">
+                    Flights can ONLY be booked through SMS notifications you send. 
+                    There's no public flight browsing.
+                  </p>
+                </div>
+                <p className="text-sm text-gray-600 mb-2 leading-relaxed">
+                  Passengers receive your SMS notification with a unique booking link, 
                   click it, fill out their details (including consent forms), and pay via Stripe Checkout. 
                   Payment is processed immediately and you receive 90% (10% platform fee is deducted automatically).
                 </p>
-                <p className="text-xs text-muted-foreground italic">
-                  Passenger flow: Your SMS notification → Unique booking link → <code>/passenger/book/[flightId]</code> → Payment via Stripe
-                </p>
+                <div className="text-xs text-muted-foreground bg-gray-50 rounded-md p-2 border-l-2 border-pink-400">
+                  Your SMS notification → Unique booking link → <code className="text-pink-600">/passenger/book/[flightId]</code> → Payment via Stripe
+                </div>
               </div>
             </div>
 
             {/* Step 5 */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+            <div className="flex gap-4 group hover:translate-x-2 transition-transform duration-200">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-orange-600 text-white font-bold text-lg shadow-lg">
                 5
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Manage Bookings</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+                <h3 className="font-bold text-lg mb-2 text-gray-800">📊 Manage Bookings</h3>
+                <p className="text-sm text-gray-600 mb-2 leading-relaxed">
                   View all passengers who booked your flight in the flight details page. You can see their contact info, 
                   payment status, and consent signatures. Send additional SMS updates about weather, timing, or cancellations.
                 </p>
-                <p className="text-xs text-muted-foreground italic">
-                  Location: <code>/pilot/flights/[id]</code> → "Notify All Passengers" button sends bulk SMS
-                </p>
+                <div className="text-xs text-muted-foreground bg-gray-50 rounded-md p-2 border-l-2 border-orange-400">
+                  <code className="text-orange-600">/pilot/flights/[id]</code> → "Notify All Passengers" button sends bulk SMS
+                </div>
               </div>
             </div>
 
             {/* Step 6 */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+            <div className="flex gap-4 group hover:translate-x-2 transition-transform duration-200">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-teal-600 text-white font-bold text-lg shadow-lg">
                 6
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Day of Flight: QR Code Check-In</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+                <h3 className="font-bold text-lg mb-2 text-gray-800">📱 Day of Flight: QR Code Check-In</h3>
+                <p className="text-sm text-gray-600 mb-2 leading-relaxed">
                   On flight day, download your unique pilot QR code from the dashboard. Passengers scan this QR code 
                   with their phones to verify their booking and "check in" for the flight. This grants them access and confirms attendance.
                 </p>
-                <p className="text-xs text-muted-foreground italic">
-                  Location: Download QR from <code>/pilot/dashboard</code> → Passengers scan via their booking page
-                </p>
+                <div className="text-xs text-muted-foreground bg-gray-50 rounded-md p-2 border-l-2 border-teal-400">
+                  Download QR from <code className="text-teal-600">/pilot/dashboard</code> → Passengers scan via their booking page
+                </div>
               </div>
             </div>
 
             {/* Step 7 */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+            <div className="flex gap-4 group hover:translate-x-2 transition-transform duration-200">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white font-bold text-lg shadow-lg">
                 7
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Get Paid</h3>
-                <p className="text-sm text-muted-foreground mb-2">
+                <h3 className="font-bold text-lg mb-2 text-gray-800">💰 Get Paid</h3>
+                <p className="text-sm text-gray-600 mb-2 leading-relaxed">
                   Stripe automatically transfers funds to your connected bank account according to their payout schedule 
                   (typically 2-7 business days after the booking). View all transactions and earnings in the Transactions page.
                 </p>
-                <p className="text-xs text-muted-foreground italic">
-                  Location: <code>/pilot/transactions</code> → Shows all charges via Stripe API
-                </p>
+                <div className="text-xs text-muted-foreground bg-gray-50 rounded-md p-2 border-l-2 border-emerald-400">
+                  <code className="text-emerald-600">/pilot/transactions</code> → Shows all charges via Stripe API
+                </div>
               </div>
             </div>
           </CardContent>
@@ -560,24 +604,32 @@ export default function HowItWorksPage() {
         </Card>
 
         {/* CTA */}
-        <div className="flex flex-col items-center gap-4 rounded-lg border-2 border-primary bg-primary/5 p-8 text-center">
-          <h3 className="text-2xl font-bold">Ready to Get Started?</h3>
-          <p className="text-muted-foreground">
-            Apply now and start connecting with passengers for your hot air balloon flights.
-          </p>
-          <div className="flex gap-4">
-            <Button asChild size="lg">
-              <Link href="/pilot/register">
-                Apply Now
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/pilot/login">
-                Already Applied? Login
-              </Link>
-            </Button>
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-1">
+          <div className="bg-white rounded-xl p-10 text-center">
+            <Sparkles className="h-12 w-12 mx-auto mb-4 text-purple-600" />
+            <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Ready to Transform Your Business?
+            </h3>
+            <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
+              Join pilots who are already building thriving balloon businesses with our platform. 
+              Get approved, start collecting passengers, and receive your first payment within days.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg">
+                <Link href="/pilot/register">
+                  <Plane className="mr-2 h-5 w-5" />
+                  Apply Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="border-2 border-purple-600 text-purple-600 hover:bg-purple-50">
+                <Link href="/pilot/login">
+                  Already Applied? Login
+                </Link>
+              </Button>
+            </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
