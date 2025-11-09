@@ -33,7 +33,9 @@ export default function NewFlightPage() {
         const res = await fetch("/api/pilot/passengers", { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
-          setPassengers(data);
+          // API returns { passengers: [...] } — handle both shapes for robustness
+          const list = data?.passengers || data || [];
+          setPassengers(list);
         }
       } catch (error) {
         console.error("Failed to fetch passengers", error);
