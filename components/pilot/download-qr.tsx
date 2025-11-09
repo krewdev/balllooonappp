@@ -6,19 +6,50 @@ import { Button } from '@/components/ui/button';
 
 export function DownloadQR({ pilotId }: { pilotId: string }) {
   const [qrUrl, setQrUrl] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
   const qrRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchQrUrl = async () => {
       try {
+        if (!pilotId) {
+          throw new Error('Missing pilot id')
+        }
+
         const response = await fetch(`/api/pilot/qr/${encodeURIComponent(pilotId)}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch QR code URL');
+          // Try to parse JSON error, otherwise fallback to text
+          const contentType = response.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const errJson = await response.json();
+            throw new Error(errJson?.error || 'Failed to fetch QR code URL')
+          }
+          const errText = await response.text();
+          throw new Error(errText || `Failed to fetch QR code URL (status ${response.status})`)
         }
-        const data = await response.json();
+
+        const contentType = response.headers.get('content-type') || '';
+        let data: any;
+        if (contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          // Defensive: if server returned HTML or plain text, capture for logging
+          const text = await response.text();
+          try {
+            data = JSON.parse(text);
+          } catch (e) {
+            throw new Error('Unexpected response when fetching QR URL: ' + text.substring(0, 200))
+          }
+        }
+
+        if (!data || !data.url) {
+          throw new Error('Invalid QR URL response')
+        }
+
         setQrUrl(data.url);
       } catch (error) {
-        console.error(error);
+        console.error('fetchQrUrl error', error);
+        setError((error as Error)?.message || String(error));
       }
     };
 
