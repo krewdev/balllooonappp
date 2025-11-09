@@ -74,19 +74,20 @@ export default function HowItWorksPage() {
               </div>
             </div>
 
-            {/* Step 3 */}
+            {/* Step 3 - Build Your Passenger List */}
             <div className="flex gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
                 3
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Create Flight Listings</h3>
+                <h3 className="font-bold mb-2">Build Your Passenger List (QR Code Registration)</h3>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Once onboarded, create flight listings with details: title, date/time, location, price, max passengers, and description. 
-                  The platform automatically creates a Stripe product and payment link for your flight.
+                  Download your unique QR code from the dashboard and share it with potential passengers (at events, on social media, etc.). 
+                  When they scan it, they're taken to a registration page with YOUR name pre-filled. They enter their details 
+                  (name, email, phone, weight in lbs, ZIP code) and become YOUR registered passenger.
                 </p>
                 <p className="text-xs text-muted-foreground italic">
-                  Location: <code>/pilot/flights/new</code> → View all at <code>/pilot/flights</code>
+                  Location: Download QR from <code>/pilot/dashboard</code> → QR links to <code>/passenger/register?pilotId={'{yourId}'}</code> → View registered passengers at <code>/pilot/passengers</code>
                 </p>
               </div>
             </div>
@@ -97,30 +98,31 @@ export default function HowItWorksPage() {
                 4
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Passengers Book & Pay</h3>
+                <h3 className="font-bold mb-2">Create Flight Listings</h3>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Passengers discover your flight, fill out their details (including consent forms), and pay via Stripe Checkout. 
-                  Payment is held securely and you receive 95% (5% platform fee is deducted automatically).
+                  Create flight listings with details: title, date/time, location, price, max passengers, and description. 
+                  The platform automatically creates a Stripe product and payment link for your flight.
                 </p>
                 <p className="text-xs text-muted-foreground italic">
-                  Passenger flow: Browse flights → <code>/passenger/book/[flightId]</code> → Payment via Stripe
+                  Location: <code>/pilot/flights/new</code> → View all at <code>/pilot/flights</code>
                 </p>
               </div>
             </div>
 
-            {/* Step 5 */}
+            {/* Step 5 - Notify Your Passengers */}
             <div className="flex gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
                 5
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Manage Bookings</h3>
+                <h3 className="font-bold mb-2">Notify Your Registered Passengers</h3>
                 <p className="text-sm text-muted-foreground mb-2">
-                  View all passengers who booked your flight in the flight details page. You can see their contact info, 
-                  payment status, and consent signatures. Send SMS notifications to all passengers about weather, timing, or cancellations.
+                  After creating a flight, go to the flight details page and use the "Notify Your Registered Passengers" feature. 
+                  Select which passengers to notify (with checkboxes), and send them an SMS with a booking link for your flight. 
+                  This is how you convert your registered passengers into paying customers!
                 </p>
                 <p className="text-xs text-muted-foreground italic">
-                  Location: <code>/pilot/flights/[id]</code> → "Notify All Passengers" button sends bulk SMS
+                  Location: <code>/pilot/flights/[id]</code> → Select passengers → Send SMS notifications
                 </p>
               </div>
             </div>
@@ -131,13 +133,13 @@ export default function HowItWorksPage() {
                 6
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Day of Flight: QR Code Check-In</h3>
+                <h3 className="font-bold mb-2">Passengers Book & Pay</h3>
                 <p className="text-sm text-muted-foreground mb-2">
-                  On flight day, download your unique pilot QR code from the dashboard. Passengers scan this QR code 
-                  with their phones to verify their booking and "check in" for the flight. This grants them access and confirms attendance.
+                  Passengers receive your SMS, click the booking link, fill out their details (including consent forms), and pay via Stripe Checkout. 
+                  Payment is processed immediately and you receive 90% (10% platform fee is deducted automatically).
                 </p>
                 <p className="text-xs text-muted-foreground italic">
-                  Location: Download QR from <code>/pilot/dashboard</code> → Passengers scan via their booking page
+                  Passenger flow: SMS link → <code>/passenger/book/[flightId]</code> → Payment via Stripe
                 </p>
               </div>
             </div>
@@ -148,6 +150,40 @@ export default function HowItWorksPage() {
                 7
               </div>
               <div className="flex-1">
+                <h3 className="font-bold mb-2">Manage Bookings</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  View all passengers who booked your flight in the flight details page. You can see their contact info, 
+                  payment status, and consent signatures. Send additional SMS updates about weather, timing, or important announcements.
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Location: <code>/pilot/flights/[id]</code> → View bookings and send updates
+                </p>
+              </div>
+            </div>
+
+            {/* Step 8 */}
+            <div className="flex gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                8
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold mb-2">Day of Flight: QR Code Check-In</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  On flight day, your pilot QR code can also be used for check-in verification. Passengers scan it 
+                  to confirm their attendance. This creates a record of who actually showed up for the flight.
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Location: QR code from <code>/pilot/dashboard</code> → Passengers scan for check-in
+                </p>
+              </div>
+            </div>
+
+            {/* Step 9 */}
+            <div className="flex gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                9
+              </div>
+              <div className="flex-1">
                 <h3 className="font-bold mb-2">Get Paid</h3>
                 <p className="text-sm text-muted-foreground mb-2">
                   Stripe automatically transfers funds to your connected bank account according to their payout schedule 
@@ -155,6 +191,58 @@ export default function HowItWorksPage() {
                 </p>
                 <p className="text-xs text-muted-foreground italic">
                   Location: <code>/pilot/transactions</code> → Shows all charges via Stripe API
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* QR Code System Explained */}
+        <Card className="mb-12 border-2 border-blue-200 bg-blue-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <QrCode className="h-5 w-5" />
+              Understanding Your QR Code
+            </CardTitle>
+            <CardDescription>
+              Your QR code is the key to building your passenger list
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-start gap-3">
+              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
+              <div>
+                <p className="font-medium">Each pilot gets a unique QR code</p>
+                <p className="text-sm text-muted-foreground">
+                  Download it from your dashboard - it's linked to your pilot ID
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
+              <div>
+                <p className="font-medium">Share it everywhere</p>
+                <p className="text-sm text-muted-foreground">
+                  Print it on business cards, display it at events, post it on social media, or include it in emails
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
+              <div>
+                <p className="font-medium">Passengers scan and register under YOU</p>
+                <p className="text-sm text-muted-foreground">
+                  When scanned, it takes them to a registration page with your name already selected. They enter their weight (in lbs), 
+                  ZIP code, phone, and email.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
+              <div>
+                <p className="font-medium">They become YOUR passengers</p>
+                <p className="text-sm text-muted-foreground">
+                  Once registered, they appear in your "My Passengers" list. You can notify them about new flights via SMS anytime.
                 </p>
               </div>
             </div>
@@ -190,7 +278,7 @@ export default function HowItWorksPage() {
                   <div>
                     <CardTitle className="text-base">Secure Payments via Stripe</CardTitle>
                     <CardDescription className="text-sm">
-                      Stripe Connect handles all payment processing. You keep 95%, platform takes 5%.
+                      Stripe Connect handles all payment processing. You keep 90%, platform takes 10%.
                     </CardDescription>
                   </div>
                 </div>
