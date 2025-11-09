@@ -1,7 +1,10 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { 
   CheckCircle2, 
   Plane, 
@@ -15,14 +18,41 @@ import {
   ArrowRight,
   Sparkles,
   TrendingUp,
-  Zap
+  Zap,
+  ArrowLeft,
+  LogIn
 } from "lucide-react"
 
 export default function HowItWorksPage() {
+  const router = useRouter()
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="container mx-auto px-4 py-16">
         <div className="mx-auto max-w-5xl">
+          {/* Top Navigation */}
+          <div className="mb-8 flex items-center justify-between">
+            <Button 
+              variant="ghost" 
+              size="lg"
+              onClick={() => router.back()}
+              className="gap-2 hover:bg-white/50"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              Back
+            </Button>
+            <Button 
+              asChild 
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+            >
+              <Link href="/pilot/login">
+                <LogIn className="mr-2 h-5 w-5" />
+                Pilot Login
+              </Link>
+            </Button>
+          </div>
+
           {/* Hero Section */}
           <div className="mb-16 text-center">
             <Badge className="mb-6 px-4 py-2 text-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">
@@ -618,13 +648,14 @@ export default function HowItWorksPage() {
               <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg">
                 <Link href="/pilot/register">
                   <Plane className="mr-2 h-5 w-5" />
-                  Apply Now
+                  Apply as New Pilot
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="border-2 border-purple-600 text-purple-600 hover:bg-purple-50">
                 <Link href="/pilot/login">
-                  Already Applied? Login
+                  <LogIn className="mr-2 h-5 w-5" />
+                  Pilot Login
                 </Link>
               </Button>
             </div>
