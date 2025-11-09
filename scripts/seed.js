@@ -5,6 +5,31 @@ const prisma = new PrismaClient();
 
 async function main() {
   const hashedPassword = await bcrypt.hash('pilotpass', 10);
+  const adminHashedPassword = await bcrypt.hash('adminpass', 10);
+
+  // Seed default admin account
+  await prisma.admin.upsert({
+    where: { email: 'admin@flyinghotair.com' },
+    update: {},
+    create: {
+      email: 'admin@flyinghotair.com',
+      passwordHash: adminHashedPassword,
+      fullName: 'Platform Administrator',
+    },
+  });
+  console.log('Upserted admin: admin@flyinghotair.com (password: adminpass)');
+
+  // Seed platform settings
+  await prisma.platformSettings.upsert({
+    where: { key: 'PLATFORM_FEE_BPS' },
+    update: {},
+    create: {
+      key: 'PLATFORM_FEE_BPS',
+      value: '1000',
+      description: 'Platform fee in basis points (1000 = 10%)',
+    },
+  });
+  console.log('Upserted platform fee setting: 10%');
 
   // Seed a specific, predictable pilot for development/testing
   await prisma.pilot.upsert({

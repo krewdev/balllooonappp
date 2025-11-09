@@ -4,38 +4,67 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, AlertCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Loader2, AlertCircle, Ban, CheckCircle } from "lucide-react"
 import { Pilot } from "@prisma/client"
 
 export function AllPilotsList() {
   const [pilots, setPilots] = useState<Pilot[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchPilots = async () => {
-      setIsLoading(true)
-      setError(null)
-      try {
-        const res = await fetch("/api/admin/pilots", {
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`,
-          },
-        })
-        if (!res.ok) {
-          throw new Error(`Failed to fetch pilots: ${res.statusText}`)
-        }
-        const data = await res.json()
-        setPilots(data)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An unknown error occurred")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
     fetchPilots()
   }, [])
+
+  const fetchPilots = async () => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const res = await fetch("/api/admin/pilots", {
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`,
+        },
+      })
+      if (!res.ok) {
+        throw new Error(`Failed to fetch pilots: ${res.statusText}`)
+      }
+      const data = await res.json()
+      setPilots(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unknown error occurred")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const toggleBlock = async (pilotId: string, currentlyBlocked: boolean) => {
+    setActionLoading(pilotId)
+    try {
+      const res = await fetch(`/api/admin/pilots/${pilotId}/block`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`,
+        },
+        body: JSON.stringify({ blocked: !currentlyBlocked }),
+      })
+
+      if (!res.ok) {
+        throw new Error("Failed to update pilot")
+      }
+
+      // Update local state
+      setPilots(pilots.map(p =>
+        p.id === pilotId ? { ...p, blocked: !currentlyBlocked } : p
+      ))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update pilot")
+    } finally {
+      setActionLoading(null)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -68,8 +97,10 @@ export function AllPilotsList() {
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Account Status</TableHead>
               <TableHead>Stripe Account</TableHead>
               <TableHead>Registered On</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -83,11 +114,46 @@ export function AllPilotsList() {
                   </Badge>
                 </TableCell>
                 <TableCell>
+                  {pilot.blocked ? (
+                    <Badge variant="destructive" className="flex items-center gap-1 w-fit">
+                      <Ban className="h-3 w-3" />
+                      Blocked
+                    </Badge>
+                  ) : (
+                    <Badge variant="default" className="flex items-center gap-1 w-fit bg-green-600">
+                      <CheckCircle className="h-3 w-3" />
+                      Active
+                    </Badge>
+                  )}
+                </TableCell>
+                <TableCell>
                   <Badge variant={pilot.stripeAccountId ? "secondary" : "outline"}>
                     {pilot.stripeAccountId ? "Onboarded" : "Not Onboarded"}
                   </Badge>
                 </TableCell>
                 <TableCell>{new Date(pilot.createdAt).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  <Button
+                    size="sm"
+                    variant={pilot.blocked ? "default" : "destructive"}
+                    onClick={() => toggleBlock(pilot.id, pilot.blocked)}
+                    disabled={actionLoading === pilot.id}
+                  >
+                    {actionLoading === pilot.id ? (
+                      "Processing..."
+                    ) : pilot.blocked ? (
+                      <>
+                        <CheckCircle className="mr-1 h-3 w-3" />
+                        Unblock
+                      </>
+                    ) : (
+                      <>
+                        <Ban className="mr-1 h-3 w-3" />
+                        Block
+                      </>
+                    )}
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
