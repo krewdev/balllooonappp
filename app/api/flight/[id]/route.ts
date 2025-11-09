@@ -5,7 +5,17 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
   try {
     const params = await props.params
     const { id } = params
-    const flight = await prisma.flight.findUnique({ where: { id } })
+    const flight = await prisma.flight.findUnique({ 
+      where: { id },
+      include: {
+        pilot: {
+          select: {
+            fullName: true,
+            phone: true
+          }
+        }
+      }
+    })
     if (!flight) return NextResponse.json({ ok: false, error: 'not found' }, { status: 404 })
     return NextResponse.json(flight)
   } catch (err) {

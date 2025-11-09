@@ -42,6 +42,12 @@ export async function POST(req: Request) {
       },
     });
 
+    // Get pilot info for the notification template
+    const pilot = await prisma.pilot.findUnique({
+      where: { id: session.userId },
+      select: { fullName: true, phone: true }
+    });
+
     // Persist flight in DB attached to the authenticated pilot
     const flight = await prisma.flight.create({
       data: {
@@ -58,7 +64,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ flight, payLink: payLink.url });
+    return NextResponse.json({ flight, payLink: payLink.url, pilot });
   } catch (err: any) {
     console.error('create flight error', err);
     return new NextResponse(JSON.stringify({ error: err.message || String(err) }), { status: 500 });

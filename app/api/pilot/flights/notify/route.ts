@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { flightId, passengerIds } = await req.json();
+    const { flightId, passengerIds, customMessage } = await req.json();
 
     if (!flightId || !passengerIds || !Array.isArray(passengerIds)) {
       return new NextResponse(
@@ -33,6 +33,7 @@ export async function POST(req: Request) {
 
     const flight = await prisma.flight.findUnique({
       where: { id: flightId, pilotId: session.userId },
+      include: { pilot: true }
     });
 
     if (!flight) {
@@ -47,11 +48,30 @@ export async function POST(req: Request) {
       },
     });
 
+    // Build the notification message template
+    const pilotName = flight.pilot.fullName || "Your pilot"
+    const flightDate = new Date(flight.date).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    })
+    const price = (flight.priceCents / 100).toFixed(2)
+
     const notificationPromises = passengers
       .filter(p => p.phone) // Ensure passenger has a phone number
       .map(passenger => {
-        const bookingUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/passenger/book/${flight.id}?passengerId=${passenger.id}`;
-        const messageBody = `Hello ${passenger.fullName}! A new flight, "${flight.title}", is available. Book your spot here: ${bookingUrl}`;
+        let messageBody = `Hello ${passenger.fullName}! 🎈\n\n${pilotName} has a hot air balloon flight available!\n\n📍 ${flight.title}\n📅 ${flightDate}\n🗺️ ${flight.location}\n💰 $${price}`
+        
+        // Add custom message if provided
+        if (customMessage && customMessage.trim()) {
+          messageBody += `\n\n${customMessage.trim()}`
+        }
+        
+        // Add payment link
+        messageBody += `\n\n🎟️ Reserve your spot: ${flight.stripePayLink}`
         
         return twilioClient.messages.create({
           body: messageBody,

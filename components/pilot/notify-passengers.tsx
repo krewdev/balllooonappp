@@ -15,33 +15,57 @@ type Passenger = {
   location: string
 }
 
+type Flight = {
+  id: string
+  title: string
+  date: string
+  location: string
+  priceCents: number
+  stripePayLink: string
+  pilot: {
+    fullName: string | null
+    phone: string | null
+  }
+}
+
 type Props = {
   flightId: string
 }
 
 export default function NotifyPassengers({ flightId }: Props) {
   const [passengers, setPassengers] = useState<Passenger[]>([])
+  const [flight, setFlight] = useState<Flight | null>(null)
   const [selectedPassengerIds, setSelectedPassengerIds] = useState<Set<string>>(new Set())
+  const [customMessage, setCustomMessage] = useState("")
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [result, setResult] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchPassengers = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch('/api/pilot/passengers')
-        if (!res.ok) throw new Error('Failed to fetch passengers')
-        const data = await res.json()
-        setPassengers(data.passengers || [])
+        const [passengersRes, flightRes] = await Promise.all([
+          fetch('/api/pilot/passengers'),
+          fetch(`/api/flight/${flightId}`)
+        ])
+        
+        if (!passengersRes.ok) throw new Error('Failed to fetch passengers')
+        if (!flightRes.ok) throw new Error('Failed to fetch flight details')
+        
+        const passengersData = await passengersRes.json()
+        const flightData = await flightRes.json()
+        
+        setPassengers(passengersData.passengers || [])
+        setFlight(flightData)
       } catch (e: any) {
         setError(e.message)
       } finally {
         setLoading(false)
       }
     }
-    fetchPassengers()
-  }, [])
+    fetchData()
+  }, [flightId])
 
   const togglePassenger = (passengerId: string) => {
     const newSet = new Set(selectedPassengerIds)
@@ -78,7 +102,8 @@ export default function NotifyPassengers({ flightId }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           flightId,
-          passengerIds: Array.from(selectedPassengerIds)
+          passengerIds: Array.from(selectedPassengerIds),
+          customMessage: customMessage.trim()
         }),
       })
       const data = await res.json()
@@ -87,12 +112,38 @@ export default function NotifyPassengers({ flightId }: Props) {
       } else {
         setResult(data)
         setSelectedPassengerIds(new Set()) // Clear selection after sending
+        setCustomMessage("") // Clear custom message
       }
     } catch (e: any) {
       setError(e?.message || "Unexpected error")
     } finally {
       setSending(false)
     }
+  }
+
+  const getPreviewMessage = () => {
+    if (!flight) return ""
+    
+    const pilotName = flight.pilot.fullName || "Your pilot"
+    const flightDate = new Date(flight.date).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    })
+    const price = (flight.priceCents / 100).toFixed(2)
+    
+    let message = `Hello [Passenger Name]! 🎈\n\n${pilotName} has a hot air balloon flight available!\n\n📍 ${flight.title}\n📅 ${flightDate}\n🗺️ ${flight.location}\n💰 $${price}`
+    
+    if (customMessage) {
+      message += `\n\n${customMessage}`
+    }
+    
+    message += `\n\n🎟️ Reserve your spot: ${flight.stripePayLink}`
+    
+    return message
   }
 
   if (loading) {
@@ -117,7 +168,37 @@ export default function NotifyPassengers({ flightId }: Props) {
   }
 
   return (
-    <form onSubmit={onSend} className="space-y-4">
+    <form onSubmit={onSend} className="space-y-6">
+      {/* Message Preview */}
+      {flight && (
+        <Card className="bg-blue-50 border-blue-200">
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Message Preview</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="whitespace-pre-wrap text-sm font-mono bg-white p-4 rounded border">
+              {getPreviewMessage()}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Custom Message */}
+      <div className="space-y-2">
+        <Label htmlFor="customMessage">Add Custom Message (Optional)</Label>
+        <textarea
+          id="customMessage"
+          value={customMessage}
+          onChange={(e) => setCustomMessage(e.target.value)}
+          placeholder="Add a personal note to your passengers..."
+          className="w-full min-h-[100px] px-3 py-2 text-sm rounded-md border border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          maxLength={300}
+        />
+        <p className="text-xs text-muted-foreground">
+          {customMessage.length}/300 characters
+        </p>
+      </div>
+
       <div className="flex items-center justify-between">
         <CardDescription>
           Select passengers to notify about this flight via SMS
