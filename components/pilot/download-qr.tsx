@@ -71,6 +71,15 @@ export function DownloadQR({ pilotId }: { pilotId: string }) {
     }
   };
 
+  if (error) {
+    return (
+      <div className="text-center text-sm text-red-600">
+        <div>Failed to load QR code.</div>
+        <div className="mt-2">{error}</div>
+      </div>
+    );
+  }
+
   if (!qrUrl) {
     return <div>Loading QR Code...</div>;
   }
