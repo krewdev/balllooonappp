@@ -15,17 +15,25 @@ export async function POST(req: Request) {
       );
     }
 
-    let user: { id: string; passwordHash: string | null } | null = null;
+    let user: { id: string; passwordHash: string | null; blocked?: boolean; approved?: boolean } | null = null;
 
     if (role === "pilot") {
       user = await prisma.pilot.findUnique({
         where: { email },
-        select: { id: true, passwordHash: true },
+        select: { id: true, passwordHash: true, blocked: true, approved: true },
       });
+      
+      // Check if pilot is approved
+      if (user && !user.approved) {
+        return NextResponse.json(
+          { error: "Your pilot account is pending approval" },
+          { status: 403 }
+        );
+      }
     } else if (role === "passenger") {
       user = await prisma.passenger.findUnique({
         where: { email },
-        select: { id: true, passwordHash: true },
+        select: { id: true, passwordHash: true, blocked: true },
       });
     } else {
       return NextResponse.json({ error: "Invalid role specified" }, { status: 400 });
@@ -33,6 +41,14 @@ export async function POST(req: Request) {
 
     if (!user || !user.passwordHash) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    }
+
+    // Check if user is blocked
+    if (user.blocked) {
+      return NextResponse.json(
+        { error: "Your account has been blocked. Please contact support." },
+        { status: 403 }
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
