@@ -19,22 +19,15 @@ export default async function PilotPassengersPage() {
     )
   }
 
-  const bookings = await prisma.booking.findMany({
+  // Get all passengers who have registered under this pilot
+  const passengers = await prisma.passenger.findMany({
     where: {
-      flight: {
-        pilotId: session.userId,
-      },
-    },
-    include: {
-      passenger: true,
+      pilotId: session.userId,
     },
     orderBy: {
       createdAt: 'desc',
     },
   })
-
-  // Deduplicate passengers
-  const passengers: Passenger[] = Array.from(new Map(bookings.map(b => [b.passenger.id, b.passenger])).values())
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -45,28 +38,38 @@ export default async function PilotPassengersPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Passengers</CardTitle>
+          <CardTitle>My Registered Passengers</CardTitle>
         </CardHeader>
         <CardContent>
           {passengers.length === 0 ? (
-            <p>No passengers have booked with you yet.</p>
+            <p className="text-muted-foreground">No passengers have registered under you yet. Share your QR code with potential passengers!</p>
           ) : (
             <div className="space-y-4">
-              {passengers.map(p => (
-                <div key={p.id} className="flex items-center justify-between p-4 rounded-lg border">
-                  <div className="flex items-center space-x-4">
-                    <Avatar>
-                      <AvatarImage src={`https://avatar.vercel.sh/${p.email}.png`} alt={p.fullName || 'Passenger'} />
-                      <AvatarFallback>{p.fullName?.charAt(0) || 'P'}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold">{p.fullName}</p>
-                      <p className="text-sm text-muted-foreground">{p.email}</p>
+              {passengers.map(p => {
+                // Convert kg back to lbs for display
+                const weightLbs = p.weightKg ? Math.round(p.weightKg / 0.453592) : null;
+                
+                return (
+                  <div key={p.id} className="flex items-center justify-between p-4 rounded-lg border">
+                    <div className="flex items-center space-x-4">
+                      <Avatar>
+                        <AvatarImage src={`https://avatar.vercel.sh/${p.email}.png`} alt={p.fullName || 'Passenger'} />
+                        <AvatarFallback>{p.fullName?.charAt(0) || 'P'}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-semibold">{p.fullName}</p>
+                        <p className="text-sm text-muted-foreground">{p.email}</p>
+                        <p className="text-sm text-muted-foreground">{p.phone}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-muted-foreground">ZIP: {p.location}</p>
+                      {weightLbs && <p className="text-sm text-muted-foreground">Weight: {weightLbs} lbs</p>}
+                      <p className="text-xs text-muted-foreground">Registered: {new Date(p.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">{p.phone}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>

@@ -5,11 +5,11 @@ import bcrypt from "bcrypt";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { fullName, email, password, weightKg, phone, location } = body;
+    const { fullName, email, password, weightLbs, phone, zipCode, pilotId } = body;
 
-    if (!fullName || !email || !password || !weightKg || !phone || !location) {
+    if (!fullName || !email || !password || !weightLbs || !phone || !zipCode) {
       return NextResponse.json(
-        { error: "Full name, email, password, weight, phone, and location are required" },
+        { error: "Full name, email, password, weight, phone, and ZIP code are required" },
         { status: 400 }
       );
     }
@@ -25,6 +25,9 @@ export async function POST(request: Request) {
       );
     }
 
+    // Convert lbs to kg for storage (1 lb = 0.453592 kg)
+    const weightKg = Math.round(parseFloat(weightLbs) * 0.453592);
+
     const passwordHash = await bcrypt.hash(password, 10);
 
     const passenger = await prisma.passenger.create({
@@ -32,9 +35,10 @@ export async function POST(request: Request) {
         fullName,
         email,
         passwordHash,
-        weightKg: parseInt(weightKg, 10),
+        weightKg,
         phone,
-        location,
+        location: zipCode,
+        pilotId: pilotId || null,
       },
     });
 

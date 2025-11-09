@@ -36,9 +36,9 @@ export function PassengerRegistrationForm({
     email: "",
     password: "",
     fullName: "",
-    weightKg: "",
+    weightLbs: "",
     phone: "",
-    location: "",
+    zipCode: "",
     pilotId: initialPilotId || "",
   })
 
@@ -176,24 +176,26 @@ export function PassengerRegistrationForm({
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="weightKg">Weight (kg)</Label>
+              <Label htmlFor="weightLbs">Weight (lbs)</Label>
               <Input
-                id="weightKg"
+                id="weightLbs"
                 type="number"
-                placeholder="75"
-                value={formData.weightKg}
-                onChange={(e) => updateFormData("weightKg", e.target.value)}
+                placeholder="165"
+                value={formData.weightLbs}
+                onChange={(e) => updateFormData("weightLbs", e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="location">Your Location (e.g., City)</Label>
+              <Label htmlFor="zipCode">ZIP Code</Label>
               <Input
-                id="location"
+                id="zipCode"
                 type="text"
-                placeholder="San Francisco"
-                value={formData.location}
-                onChange={(e) => updateFormData("location", e.target.value)}
+                placeholder="94102"
+                maxLength={5}
+                pattern="[0-9]{5}"
+                value={formData.zipCode}
+                onChange={(e) => updateFormData("zipCode", e.target.value)}
                 required
               />
             </div>

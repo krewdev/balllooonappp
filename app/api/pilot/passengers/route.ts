@@ -14,10 +14,18 @@ export async function GET(request: Request) {
 
     const passengers = await prisma.passenger.findMany({
       where: { pilotId: session.userId },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        location: true,
+        createdAt: true,
+      },
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(passengers);
+    return NextResponse.json({ passengers });
   } catch (error) {
     console.error("Failed to fetch passengers:", error);
     return NextResponse.json(

@@ -111,7 +111,10 @@ export default async function FlightDetailPage({ params }: Props) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Notify Interested Passengers</CardTitle>
+              <CardTitle>Notify Your Registered Passengers</CardTitle>
+              <CardDescription>
+                Send SMS notifications to passengers who have registered under you
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <NotifyPassengersWrapper flightId={id} />
