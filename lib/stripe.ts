@@ -1,24 +1,32 @@
 import Stripe from "stripe"
 
-const SECRET = process.env.STRIPE_SECRET_KEY
-if (!SECRET) {
-  throw new Error("STRIPE_SECRET_KEY is not set")
-}
-if (SECRET.startsWith("pk_")) {
-  throw new Error(
-    "STRIPE_SECRET_KEY appears to be a publishable key (starts with pk_). Use your secret key (starts with sk_)."
-  )
-}
-if (SECRET.includes("your_") || SECRET.includes("YOUR_") || SECRET.endsWith("_here")) {
-  throw new Error(
-    "STRIPE_SECRET_KEY is set to a placeholder value. Please update .env.local with your actual Stripe secret key from https://dashboard.stripe.com/test/apikeys"
-  )
+const SECRET = process.env.STRIPE_SECRET_KEY || ""
+
+function validateStripeKey() {
+  if (!SECRET) {
+    throw new Error("STRIPE_SECRET_KEY is not set")
+  }
+  if (SECRET.startsWith("pk_")) {
+    throw new Error(
+      "STRIPE_SECRET_KEY appears to be a publishable key (starts with pk_). Use your secret key (starts with sk_)."
+    )
+  }
+  if (SECRET.includes("your_") || SECRET.includes("YOUR_") || SECRET.endsWith("_here")) {
+    throw new Error(
+      "STRIPE_SECRET_KEY is set to a placeholder value. Please update .env.local with your actual Stripe secret key from https://dashboard.stripe.com/test/apikeys"
+    )
+  }
 }
 
-export const stripe = new Stripe(SECRET, {
+// Only validate at runtime, not during build
+if (typeof window === 'undefined' && process.env.NODE_ENV !== 'production') {
+  validateStripeKey()
+}
+
+export const stripe = SECRET ? new Stripe(SECRET, {
   apiVersion: "2025-09-30.clover",
   typescript: true,
-})
+}) : null as any as Stripe
 
 // Pilot subscription pricing
 export const PILOT_SUBSCRIPTION_PRICES = {
