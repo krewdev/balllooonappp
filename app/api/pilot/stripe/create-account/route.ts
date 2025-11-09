@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 import { cookies } from 'next/headers'
 import { getSession } from '@/lib/sessions'
@@ -23,6 +23,7 @@ export async function POST(req: Request) {
     return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
   }
   try {
+    const stripe = getStripe()
     // Ensure pilot exists
     const pilot = await prisma.pilot.findUnique({ where: { id: pilotId } })
     if (!pilot) {

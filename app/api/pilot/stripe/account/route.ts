@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/sessions';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -13,6 +13,7 @@ export async function GET() {
   }
 
   try {
+    const stripe = getStripe()
     const pilot = await prisma.pilot.findUnique({
       where: { id: session.userId },
       select: { stripeAccountId: true }

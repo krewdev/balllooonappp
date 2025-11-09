@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { stripe } from "@/lib/stripe"
+import { getStripe } from "@/lib/stripe"
 import { prisma } from "@/lib/prisma"
 import type Stripe from "stripe"
 
@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
   let event: Stripe.Event
 
   try {
+    const stripe = getStripe()
     // In production, you should set STRIPE_WEBHOOK_SECRET
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
     if (webhookSecret) {

@@ -2,6 +2,8 @@ import Stripe from "stripe"
 
 const SECRET = process.env.STRIPE_SECRET_KEY || ""
 
+let stripeInstance: Stripe | null = null
+
 function validateStripeKey() {
   if (!SECRET) {
     throw new Error("STRIPE_SECRET_KEY is not set")
@@ -18,15 +20,15 @@ function validateStripeKey() {
   }
 }
 
-// Only validate at runtime, not during build
-if (typeof window === 'undefined' && process.env.NODE_ENV !== 'production') {
+export function getStripe() {
+  if (stripeInstance) return stripeInstance
   validateStripeKey()
+  stripeInstance = new Stripe(SECRET, {
+    apiVersion: "2025-09-30.clover",
+    typescript: true,
+  })
+  return stripeInstance
 }
-
-export const stripe = SECRET ? new Stripe(SECRET, {
-  apiVersion: "2025-09-30.clover",
-  typescript: true,
-}) : null as any as Stripe
 
 // Pilot subscription pricing
 export const PILOT_SUBSCRIPTION_PRICES = {

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { cookies } from 'next/headers'
 import { getSession } from '@/lib/sessions'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 
 const DEV_TOKEN = 'dev-token-pilot-123'
 
@@ -24,6 +24,7 @@ export async function POST(req: Request) {
   }
 
   try {
+    const stripe = getStripe()
     const pilot = await prisma.pilot.findUnique({ where: { id: pilotId } })
     if (!pilot) return new NextResponse(JSON.stringify({ error: 'Pilot not found' }), { status: 404 })
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/sessions'
 
@@ -17,6 +17,7 @@ export async function GET() {
   }
 
   try {
+    const stripe = getStripe()
     const charges = await stripe.charges.list({
       limit: 100,
     }, { stripeAccount: pilot.stripeAccountId });

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/sessions'
 
@@ -12,6 +12,7 @@ export async function POST(req: Request) {
   }
 
   try {
+    const stripe = getStripe()
     const pilot = await prisma.pilot.findUnique({
       where: { id: session.userId },
     })

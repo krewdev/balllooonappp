@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { stripe, PLATFORM_FEE_BPS } from "@/lib/stripe"
+import { getStripe, PLATFORM_FEE_BPS } from "@/lib/stripe"
 
 export async function POST(req: Request) {
   try {
@@ -87,6 +87,7 @@ export async function POST(req: Request) {
       }
     }
 
+    const stripe = getStripe()
     const session = await stripe.checkout.sessions.create(base)
 
     return NextResponse.json({ ok: true, url: session.url })

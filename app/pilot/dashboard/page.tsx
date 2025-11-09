@@ -17,7 +17,7 @@ import { RestartTutorialButton } from "@/components/pilot/restart-tutorial-butto
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "@/lib/sessions";
 import { Pilot } from "@prisma/client";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 async function getStripeStatus(
   stripeAccountId: string | null
@@ -26,6 +26,7 @@ async function getStripeStatus(
     return { hasAccount: false, onboarded: false };
   }
   try {
+    const stripe = getStripe()
     const account = await stripe.accounts.retrieve(stripeAccountId);
     return {
       hasAccount: true,

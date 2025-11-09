@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { stripe, PILOT_SUBSCRIPTION_PRICES, MEISTER_SERVICE_PRICES } from "@/lib/stripe"
+import { getStripe, PILOT_SUBSCRIPTION_PRICES, MEISTER_SERVICE_PRICES } from "@/lib/stripe"
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
       ]
     }
 
+    const stripe = getStripe()
     const session = await stripe.checkout.sessions.create(sessionConfig)
 
     return NextResponse.json({ sessionId: session.id, url: session.url })
