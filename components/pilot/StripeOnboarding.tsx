@@ -28,11 +28,24 @@ export function StripeOnboarding({ pilot }: StripeOnboardingProps) {
   useEffect(() => {
     const checkStripeStatus = async () => {
       try {
-        const res = await fetch("/api/pilot/stripe/account");
-        const data = await res.json();
+        const res = await fetch("/api/pilot/stripe/account", { credentials: 'include' });
+
+        // Defensive parsing like other components
+        const contentType = res.headers.get('content-type') || '';
+        let data: any;
+        if (contentType.includes('application/json')) {
+          data = await res.json();
+        } else {
+          const text = await res.text();
+          try {
+            data = JSON.parse(text);
+          } catch (e) {
+            data = { error: text };
+          }
+        }
 
         if (!res.ok) {
-          throw new Error(data.error || "Failed to fetch Stripe status.");
+          throw new Error(data?.error || data?.details || `Failed to fetch Stripe status (status ${res.status})`);
         }
 
         if (!data.hasAccount) {
@@ -59,11 +72,24 @@ export function StripeOnboarding({ pilot }: StripeOnboardingProps) {
       // and then returns an onboarding link.
       const res = await fetch("/api/pilot/stripe/onboarding", {
         method: "POST",
+        credentials: 'include'
       });
-      const data = await res.json();
+
+      const contentType = res.headers.get('content-type') || '';
+      let data: any;
+      if (contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          data = { error: text };
+        }
+      }
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to start onboarding.");
+        throw new Error(data?.error || data?.details || `Failed to start onboarding (status ${res.status})`);
       }
 
       // Redirect the user to the Stripe onboarding URL
