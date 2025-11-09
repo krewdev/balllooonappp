@@ -25,61 +25,146 @@ export default function HowItWorksPage() {
             <Plane className="mr-1 h-3 w-3" />
             For Pilots
           </Badge>
-          <h1 className="mb-4 text-4xl font-bold">How It Works for Pilots</h1>
+          <h1 className="mb-4 text-4xl font-bold">How the Platform Works</h1>
           <p className="text-lg text-muted-foreground">
-            Join our platform to connect with passengers, manage bookings, and earn revenue from your hot air balloon flights.
+            A complete guide to managing your hot air balloon business - from registration through payment.
           </p>
         </div>
 
-        {/* Overview Steps */}
-        <div className="mb-12 grid gap-6 md:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <span className="text-xl font-bold text-primary">1</span>
+        {/* The Complete Workflow */}
+        <Card className="mb-12 border-2 border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-2xl">The Complete Pilot Journey</CardTitle>
+            <CardDescription>
+              Here's the step-by-step process from joining the platform to receiving payment
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Step 1 */}
+            <div className="flex gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                1
               </div>
-              <CardTitle>Apply & Get Approved</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Submit your pilot credentials, license, and insurance information for admin review.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <span className="text-xl font-bold text-primary">2</span>
+              <div className="flex-1">
+                <h3 className="font-bold mb-2">Registration & Approval</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Create your pilot account by providing your credentials (license, insurance, balloon registration). 
+                  An admin reviews and approves your application, typically within 24-48 hours.
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Location: <code>/pilot/register</code> → Admin review at <code>/admin/pilot-approvals</code>
+                </p>
               </div>
-              <CardTitle>Connect Stripe</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Set up your Stripe account to receive payments directly from passenger bookings.
-              </p>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card>
-            <CardHeader>
-              <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <span className="text-xl font-bold text-primary">3</span>
+            {/* Step 2 */}
+            <div className="flex gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                2
               </div>
-              <CardTitle>Create & Manage</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Schedule flights, manage bookings, notify passengers, and track your earnings.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+              <div className="flex-1">
+                <h3 className="font-bold mb-2">Stripe Onboarding</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  After approval, you'll be prompted to connect your Stripe account. This is required to receive payments. 
+                  You'll complete Stripe's onboarding form (identity verification, bank account details, tax info).
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Location: Onboarding prompt appears in <code>/pilot/dashboard</code>
+                </p>
+              </div>
+            </div>
 
-        {/* Detailed Features */}
+            {/* Step 3 */}
+            <div className="flex gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                3
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold mb-2">Create Flight Listings</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Once onboarded, create flight listings with details: title, date/time, location, price, max passengers, and description. 
+                  The platform automatically creates a Stripe product and payment link for your flight.
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Location: <code>/pilot/flights/new</code> → View all at <code>/pilot/flights</code>
+                </p>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="flex gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                4
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold mb-2">Passengers Book & Pay</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Passengers discover your flight, fill out their details (including consent forms), and pay via Stripe Checkout. 
+                  Payment is held securely and you receive 95% (5% platform fee is deducted automatically).
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Passenger flow: Browse flights → <code>/passenger/book/[flightId]</code> → Payment via Stripe
+                </p>
+              </div>
+            </div>
+
+            {/* Step 5 */}
+            <div className="flex gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                5
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold mb-2">Manage Bookings</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  View all passengers who booked your flight in the flight details page. You can see their contact info, 
+                  payment status, and consent signatures. Send SMS notifications to all passengers about weather, timing, or cancellations.
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Location: <code>/pilot/flights/[id]</code> → "Notify All Passengers" button sends bulk SMS
+                </p>
+              </div>
+            </div>
+
+            {/* Step 6 */}
+            <div className="flex gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                6
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold mb-2">Day of Flight: QR Code Check-In</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  On flight day, download your unique pilot QR code from the dashboard. Passengers scan this QR code 
+                  with their phones to verify their booking and "check in" for the flight. This grants them access and confirms attendance.
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Location: Download QR from <code>/pilot/dashboard</code> → Passengers scan via their booking page
+                </p>
+              </div>
+            </div>
+
+            {/* Step 7 */}
+            <div className="flex gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                7
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold mb-2">Get Paid</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Stripe automatically transfers funds to your connected bank account according to their payout schedule 
+                  (typically 2-7 business days after the booking). View all transactions and earnings in the Transactions page.
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Location: <code>/pilot/transactions</code> → Shows all charges via Stripe API
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Key Features Quick Reference */}
         <div className="mb-12">
-          <h2 className="mb-6 text-2xl font-bold">What You Can Do</h2>
-          <div className="space-y-4">
+          <h2 className="mb-6 text-2xl font-bold">Platform Features</h2>
+          <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <div className="flex items-start gap-4">
@@ -87,9 +172,9 @@ export default function HowItWorksPage() {
                     <Calendar className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <CardTitle>Schedule Flights</CardTitle>
-                    <CardDescription>
-                      Create flight listings with date, time, location, capacity, and pricing. Flights are automatically listed for passengers to book.
+                    <CardTitle className="text-base">Flight Management</CardTitle>
+                    <CardDescription className="text-sm">
+                      Create unlimited flights, set pricing, manage capacity, and track bookings in real-time.
                     </CardDescription>
                   </div>
                 </div>
@@ -103,9 +188,9 @@ export default function HowItWorksPage() {
                     <CreditCard className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <CardTitle>Receive Payments</CardTitle>
-                    <CardDescription>
-                      Passengers pay upfront through Stripe. Funds are deposited directly to your connected Stripe account (minus a 5% platform fee).
+                    <CardTitle className="text-base">Secure Payments via Stripe</CardTitle>
+                    <CardDescription className="text-sm">
+                      Stripe Connect handles all payment processing. You keep 95%, platform takes 5%.
                     </CardDescription>
                   </div>
                 </div>
@@ -116,28 +201,12 @@ export default function HowItWorksPage() {
               <CardHeader>
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
-                    <Users className="h-5 w-5 text-purple-600" />
+                    <Bell className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
-                    <CardTitle>Manage Bookings</CardTitle>
-                    <CardDescription>
-                      View all bookings for each flight, see passenger details, and track payment status in real-time.
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100">
-                    <Bell className="h-5 w-5 text-orange-600" />
-                  </div>
-                  <div>
-                    <CardTitle>Notify Passengers</CardTitle>
-                    <CardDescription>
-                      Send SMS notifications to all booked passengers for weather updates, schedule changes, or important announcements.
+                    <CardTitle className="text-base">SMS Notifications</CardTitle>
+                    <CardDescription className="text-sm">
+                      Send mass SMS to all passengers for weather updates, schedule changes, or reminders.
                     </CardDescription>
                   </div>
                 </div>
@@ -151,9 +220,9 @@ export default function HowItWorksPage() {
                     <QrCode className="h-5 w-5 text-pink-600" />
                   </div>
                   <div>
-                    <CardTitle>QR Code Check-In</CardTitle>
-                    <CardDescription>
-                      Generate a unique pilot QR code that passengers scan on the day of flight to verify their booking and grant flight access.
+                    <CardTitle className="text-base">QR Code Check-In</CardTitle>
+                    <CardDescription className="text-sm">
+                      Contactless verification system. Passengers scan your QR code to confirm attendance.
                     </CardDescription>
                   </div>
                 </div>
@@ -164,12 +233,28 @@ export default function HowItWorksPage() {
               <CardHeader>
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-100">
-                    <DollarSign className="h-5 w-5 text-yellow-600" />
+                    <Users className="h-5 w-5 text-yellow-600" />
                   </div>
                   <div>
-                    <CardTitle>Track Earnings</CardTitle>
-                    <CardDescription>
-                      View transaction history, payouts, and revenue analytics. All payments are processed securely through Stripe.
+                    <CardTitle className="text-base">Passenger Management</CardTitle>
+                    <CardDescription className="text-sm">
+                      View passenger details, consent forms, emergency contacts, and booking history.
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100">
+                    <DollarSign className="h-5 w-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-base">Revenue Tracking</CardTitle>
+                    <CardDescription className="text-sm">
+                      View transaction history, earnings, and payout schedules from your dashboard.
                     </CardDescription>
                   </div>
                 </div>
@@ -183,36 +268,88 @@ export default function HowItWorksPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              How Payments Work
+              Payment Processing Details
             </CardTitle>
+            <CardDescription>
+              Understanding the money flow from booking to your bank account
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-start gap-3">
-              <CheckCircle2 className="mt-1 h-5 w-5 text-green-600" />
+              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-green-600" />
               <div>
-                <p className="font-medium">Passenger books and pays</p>
+                <p className="font-medium">Passenger pays upfront via Stripe Checkout</p>
                 <p className="text-sm text-muted-foreground">
-                  Payment is processed immediately through Stripe Checkout
+                  When a passenger books, they complete payment immediately through Stripe's secure checkout.
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <CheckCircle2 className="mt-1 h-5 w-5 text-green-600" />
+              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-green-600" />
               <div>
-                <p className="font-medium">Platform fee: 5%</p>
+                <p className="font-medium">Platform fee: 10% (configurable)</p>
                 <p className="text-sm text-muted-foreground">
-                  A 5% fee is automatically deducted to support the platform
+                  The platform automatically deducts a 10% application fee (set by PLATFORM_FEE_BPS environment variable, default 1000 basis points = 10%).
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <CheckCircle2 className="mt-1 h-5 w-5 text-green-600" />
+              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-green-600" />
               <div>
-                <p className="font-medium">Direct deposit to you</p>
+                <p className="font-medium">Direct deposit to your Stripe account</p>
                 <p className="text-sm text-muted-foreground">
-                  Remaining 95% goes directly to your Stripe account (following Stripe's standard payout schedule)
+                  The remaining 90% goes directly to your connected Stripe account. Stripe then transfers to your bank account per their payout schedule (typically 2-7 business days).
                 </p>
               </div>
+            </div>
+            <div className="rounded-lg bg-muted p-4 mt-4">
+              <p className="text-sm font-medium mb-2">Example: $100 flight booking</p>
+              <ul className="text-sm space-y-1 text-muted-foreground">
+                <li>• Passenger pays: <strong>$100.00</strong></li>
+                <li>• Platform fee (10%): <strong>-$10.00</strong></li>
+                <li>• You receive: <strong>$90.00</strong></li>
+                <li>• Stripe processing fee: <strong>~$3.20</strong> (deducted by Stripe separately)</li>
+                <li>• Net to your bank: <strong>~$86.80</strong></li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Technical Details */}
+        <Card className="mb-12 bg-slate-50">
+          <CardHeader>
+            <CardTitle>Technical Implementation</CardTitle>
+            <CardDescription>
+              For developers: How the system works under the hood
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            <div>
+              <p className="font-medium mb-1">Payment Architecture</p>
+              <p className="text-muted-foreground">
+                Uses Stripe Connect with "destination charges" model. Each booking creates a Payment Intent with application_fee_amount 
+                and transfer_data pointing to the pilot's connected Stripe account.
+              </p>
+            </div>
+            <div>
+              <p className="font-medium mb-1">Onboarding Flow</p>
+              <p className="text-muted-foreground">
+                Stripe Connect Express accounts are created via API. AccountLinks provide hosted onboarding forms for KYC/identity verification.
+              </p>
+            </div>
+            <div>
+              <p className="font-medium mb-1">QR Code System</p>
+              <p className="text-muted-foreground">
+                Each pilot gets a unique ID-based QR code. Passengers scan it, triggering API verification (POST /api/pilot/qr/verify) 
+                that checks booking status and grants flight access.
+              </p>
+            </div>
+            <div>
+              <p className="font-medium mb-1">SMS Notifications</p>
+              <p className="text-muted-foreground">
+                Powered by Twilio API. Bulk SMS sent via POST /api/pilot/flights/notify, which fetches all bookings for a flight 
+                and sends messages in parallel.
+              </p>
             </div>
           </CardContent>
         </Card>
