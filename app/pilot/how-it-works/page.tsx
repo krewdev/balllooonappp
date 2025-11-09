@@ -74,28 +74,10 @@ export default function HowItWorksPage() {
               </div>
             </div>
 
-            {/* Step 3 - Build Your Passenger List */}
+            {/* Step 3 */}
             <div className="flex gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
                 3
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold mb-2">Build Your Passenger List (QR Code Registration)</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  Download your unique QR code from the dashboard and share it with potential passengers (at events, on social media, etc.). 
-                  When they scan it, they're taken to a registration page with YOUR name pre-filled. They enter their details 
-                  (name, email, phone, weight in lbs, ZIP code) and become YOUR registered passenger.
-                </p>
-                <p className="text-xs text-muted-foreground italic">
-                  Location: Download QR from <code>/pilot/dashboard</code> → QR links to <code>/passenger/register?pilotId={'{yourId}'}</code> → View registered passengers at <code>/pilot/passengers</code>
-                </p>
-              </div>
-            </div>
-
-            {/* Step 4 */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
-                4
               </div>
               <div className="flex-1">
                 <h3 className="font-bold mb-2">Create Flight Listings</h3>
@@ -109,20 +91,38 @@ export default function HowItWorksPage() {
               </div>
             </div>
 
-            {/* Step 5 - Notify Your Passengers */}
+            {/* Step 4 */}
+            <div className="flex gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                4
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold mb-2">Passengers Book & Pay (Notification-Only)</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  <strong className="text-primary">Important:</strong> Flights can ONLY be booked through SMS notifications you send. 
+                  There's no public flight browsing. Passengers receive your SMS notification with a unique booking link, 
+                  click it, fill out their details (including consent forms), and pay via Stripe Checkout. 
+                  Payment is processed immediately and you receive 90% (10% platform fee is deducted automatically).
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Passenger flow: Your SMS notification → Unique booking link → <code>/passenger/book/[flightId]</code> → Payment via Stripe
+                </p>
+              </div>
+            </div>
+
+            {/* Step 5 */}
             <div className="flex gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
                 5
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Notify Your Registered Passengers</h3>
+                <h3 className="font-bold mb-2">Manage Bookings</h3>
                 <p className="text-sm text-muted-foreground mb-2">
-                  After creating a flight, go to the flight details page and use the "Notify Your Registered Passengers" feature. 
-                  Select which passengers to notify (with checkboxes), and send them an SMS with a booking link for your flight. 
-                  This is how you convert your registered passengers into paying customers!
+                  View all passengers who booked your flight in the flight details page. You can see their contact info, 
+                  payment status, and consent signatures. Send additional SMS updates about weather, timing, or cancellations.
                 </p>
                 <p className="text-xs text-muted-foreground italic">
-                  Location: <code>/pilot/flights/[id]</code> → Select passengers → Send SMS notifications
+                  Location: <code>/pilot/flights/[id]</code> → "Notify All Passengers" button sends bulk SMS
                 </p>
               </div>
             </div>
@@ -133,13 +133,13 @@ export default function HowItWorksPage() {
                 6
               </div>
               <div className="flex-1">
-                <h3 className="font-bold mb-2">Passengers Book & Pay</h3>
+                <h3 className="font-bold mb-2">Day of Flight: QR Code Check-In</h3>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Passengers receive your SMS, click the booking link, fill out their details (including consent forms), and pay via Stripe Checkout. 
-                  Payment is processed immediately and you receive 90% (10% platform fee is deducted automatically).
+                  On flight day, download your unique pilot QR code from the dashboard. Passengers scan this QR code 
+                  with their phones to verify their booking and "check in" for the flight. This grants them access and confirms attendance.
                 </p>
                 <p className="text-xs text-muted-foreground italic">
-                  Passenger flow: SMS link → <code>/passenger/book/[flightId]</code> → Payment via Stripe
+                  Location: Download QR from <code>/pilot/dashboard</code> → Passengers scan via their booking page
                 </p>
               </div>
             </div>
@@ -148,40 +148,6 @@ export default function HowItWorksPage() {
             <div className="flex gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
                 7
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold mb-2">Manage Bookings</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  View all passengers who booked your flight in the flight details page. You can see their contact info, 
-                  payment status, and consent signatures. Send additional SMS updates about weather, timing, or important announcements.
-                </p>
-                <p className="text-xs text-muted-foreground italic">
-                  Location: <code>/pilot/flights/[id]</code> → View bookings and send updates
-                </p>
-              </div>
-            </div>
-
-            {/* Step 8 */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
-                8
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold mb-2">Day of Flight: QR Code Check-In</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  On flight day, your pilot QR code can also be used for check-in verification. Passengers scan it 
-                  to confirm their attendance. This creates a record of who actually showed up for the flight.
-                </p>
-                <p className="text-xs text-muted-foreground italic">
-                  Location: QR code from <code>/pilot/dashboard</code> → Passengers scan for check-in
-                </p>
-              </div>
-            </div>
-
-            {/* Step 9 */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
-                9
               </div>
               <div className="flex-1">
                 <h3 className="font-bold mb-2">Get Paid</h3>
@@ -202,48 +168,161 @@ export default function HowItWorksPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <QrCode className="h-5 w-5" />
-              Understanding Your QR Code
+              QR Code System: Registration & Check-In
             </CardTitle>
             <CardDescription>
-              Your QR code is the key to building your passenger list
+              Your QR code serves two critical purposes in the workflow
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Passenger Registration Use */}
+            <div>
+              <h4 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                <Users className="h-5 w-5 text-blue-600" />
+                1. Building Your Passenger List
+              </h4>
+              <div className="space-y-3 ml-7">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
+                  <div>
+                    <p className="font-medium">Download your unique QR code</p>
+                    <p className="text-sm text-muted-foreground">
+                      Each pilot gets a unique QR code from the dashboard. This code links directly to your pilot ID.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
+                  <div>
+                    <p className="font-medium">Share it everywhere</p>
+                    <p className="text-sm text-muted-foreground">
+                      Print on business cards, display at events, post on social media, add to emails. The more you share, the bigger your passenger pool!
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
+                  <div>
+                    <p className="font-medium">Passengers scan and register under YOU</p>
+                    <p className="text-sm text-muted-foreground">
+                      When someone scans your QR code, they're taken to <code>/passenger/register?pilotId={'{yourId}'}</code> with your name pre-filled. 
+                      They enter their details: name, email, phone, weight (in lbs), and ZIP code.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
+                  <div>
+                    <p className="font-medium">They become YOUR registered passengers</p>
+                    <p className="text-sm text-muted-foreground">
+                      Once registered, they appear in your "My Passengers" list at <code>/pilot/passengers</code>. 
+                      You can now send them SMS notifications about upcoming flights!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Check-In Use */}
+            <div className="border-t pt-6">
+              <h4 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-green-600" />
+                2. Day-of-Flight Check-In
+              </h4>
+              <div className="space-y-3 ml-7">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-green-600" />
+                  <div>
+                    <p className="font-medium">Verify passenger attendance</p>
+                    <p className="text-sm text-muted-foreground">
+                      On flight day, passengers who have booked and paid can scan your QR code again to check in. 
+                      This confirms their attendance and creates a record of who showed up.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-green-600" />
+                  <div>
+                    <p className="font-medium">Contactless verification</p>
+                    <p className="text-sm text-muted-foreground">
+                      No need for paper tickets or manual check-ins. Passengers scan, system verifies their booking, done!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Notification-Based Booking Flow */}
+        <Card className="mb-12 border-2 border-purple-200 bg-purple-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Bell className="h-5 w-5" />
+              How Flight Bookings Work (Notification-Only Model)
+            </CardTitle>
+            <CardDescription>
+              Important: There's NO public flight browsing. All bookings come through YOUR notifications.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-start gap-3">
-              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
-              <div>
-                <p className="font-medium">Each pilot gets a unique QR code</p>
-                <p className="text-sm text-muted-foreground">
-                  Download it from your dashboard - it's linked to your pilot ID
-                </p>
-              </div>
+            <div className="rounded-lg bg-purple-100 border-2 border-purple-300 p-4 mb-4">
+              <p className="font-semibold text-purple-900 mb-2">🔒 You Control Who Can Book</p>
+              <p className="text-sm text-purple-800">
+                Unlike traditional booking platforms, passengers can't browse and book flights on their own. 
+                YOU decide who gets the booking link by sending SMS notifications to your registered passengers.
+              </p>
             </div>
-            <div className="flex items-start gap-3">
-              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
-              <div>
-                <p className="font-medium">Share it everywhere</p>
-                <p className="text-sm text-muted-foreground">
-                  Print it on business cards, display it at events, post it on social media, or include it in emails
-                </p>
+
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-600 text-white text-xs font-bold">1</div>
+                <div>
+                  <p className="font-medium">Build your passenger list via QR code</p>
+                  <p className="text-sm text-muted-foreground">
+                    People scan your QR code and register. This creates YOUR private passenger database.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
-              <div>
-                <p className="font-medium">Passengers scan and register under YOU</p>
-                <p className="text-sm text-muted-foreground">
-                  When scanned, it takes them to a registration page with your name already selected. They enter their weight (in lbs), 
-                  ZIP code, phone, and email.
-                </p>
+
+              <div className="flex items-start gap-3">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-600 text-white text-xs font-bold">2</div>
+                <div>
+                  <p className="font-medium">Create a flight listing</p>
+                  <p className="text-sm text-muted-foreground">
+                    Set up your flight details, pricing, capacity. The system generates a Stripe payment link.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-600" />
-              <div>
-                <p className="font-medium">They become YOUR passengers</p>
-                <p className="text-sm text-muted-foreground">
-                  Once registered, they appear in your "My Passengers" list. You can notify them about new flights via SMS anytime.
-                </p>
+
+              <div className="flex items-start gap-3">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-600 text-white text-xs font-bold">3</div>
+                <div>
+                  <p className="font-medium">Select passengers to notify</p>
+                  <p className="text-sm text-muted-foreground">
+                    Go to the flight page, choose which registered passengers to notify (checkboxes), and send SMS.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-600 text-white text-xs font-bold">4</div>
+                <div>
+                  <p className="font-medium">Passengers receive unique booking links</p>
+                  <p className="text-sm text-muted-foreground">
+                    Each SMS contains a link to <code>/passenger/book/[flightId]</code> where they can book and pay.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-600 text-white text-xs font-bold">5</div>
+                <div>
+                  <p className="font-medium">They book and pay instantly</p>
+                  <p className="text-sm text-muted-foreground">
+                    Passenger fills consent forms and pays via Stripe. You get paid immediately (minus 10% platform fee).
+                  </p>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -292,9 +371,9 @@ export default function HowItWorksPage() {
                     <Bell className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
-                    <CardTitle className="text-base">SMS Notifications</CardTitle>
+                    <CardTitle className="text-base">SMS Notifications (Booking Links)</CardTitle>
                     <CardDescription className="text-sm">
-                      Send mass SMS to all passengers for weather updates, schedule changes, or reminders.
+                      Send booking links to your registered passengers. This is the ONLY way they can book flights.
                     </CardDescription>
                   </div>
                 </div>
@@ -308,9 +387,9 @@ export default function HowItWorksPage() {
                     <QrCode className="h-5 w-5 text-pink-600" />
                   </div>
                   <div>
-                    <CardTitle className="text-base">QR Code Check-In</CardTitle>
+                    <CardTitle className="text-base">QR Code: Registration & Check-In</CardTitle>
                     <CardDescription className="text-sm">
-                      Contactless verification system. Passengers scan your QR code to confirm attendance.
+                      Build your passenger list (registration) and verify attendance on flight day (check-in).
                     </CardDescription>
                   </div>
                 </div>
