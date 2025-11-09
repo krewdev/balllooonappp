@@ -63,7 +63,7 @@ export async function POST(req: Request) {
     const notificationPromises = passengers
       .filter(p => p.phone) // Ensure passenger has a phone number
       .map(passenger => {
-        let messageBody = `Hello ${passenger.fullName}! 🎈\n\n${pilotName} has a hot air balloon flight available!\n\n📍 ${flight.title}\n📅 ${flightDate}\n🗺️ ${flight.location}\n💰 $${price}`
+        let messageBody = `Hello ${passenger.fullName}!\n\n${pilotName} has a hot air balloon flight available!\n\nFlight: ${flight.title}\nDate: ${flightDate}\nLocation: ${flight.location}\nPrice: $${price}`
         
         // Add custom message if provided
         if (customMessage && customMessage.trim()) {
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
         }
         
         // Add payment link
-        messageBody += `\n\n🎟️ Reserve your spot: ${flight.stripePayLink}`
+        messageBody += `\n\nReserve your spot: ${flight.stripePayLink}`
         
         return twilioClient.messages.create({
           body: messageBody,

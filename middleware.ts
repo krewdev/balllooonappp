@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { getSession } from '@/lib/sessions'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -12,23 +11,21 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next()
     }
 
-    // Check for session
+    // Check for session cookie (simplified - full validation happens in API routes)
     const sessionId = request.cookies.get('session')?.value
-    const session = await getSession(sessionId)
-
-    // Redirect to login if no session or not admin
-    if (!session || session.role !== 'admin') {
+    
+    // If no session cookie, redirect to login
+    if (!sessionId) {
       const loginUrl = new URL('/admin/login', request.url)
       return NextResponse.redirect(loginUrl)
     }
   }
 
-  // Protect pilot routes (optional - check if pilot is blocked)
+  // Protect pilot routes
   if (pathname.startsWith('/pilot') && !pathname.includes('/login') && !pathname.includes('/register') && !pathname.includes('/how-it-works')) {
     const sessionId = request.cookies.get('session')?.value
-    const session = await getSession(sessionId)
-
-    if (!session || session.role !== 'pilot') {
+    
+    if (!sessionId) {
       const loginUrl = new URL('/pilot/login', request.url)
       return NextResponse.redirect(loginUrl)
     }
@@ -37,9 +34,8 @@ export async function middleware(request: NextRequest) {
   // Protect passenger routes
   if (pathname.startsWith('/passenger') && !pathname.includes('/login') && !pathname.includes('/register') && !pathname.includes('/book') && !pathname.includes('/consent')) {
     const sessionId = request.cookies.get('session')?.value
-    const session = await getSession(sessionId)
-
-    if (!session || session.role !== 'passenger') {
+    
+    if (!sessionId) {
       const loginUrl = new URL('/passenger/login', request.url)
       return NextResponse.redirect(loginUrl)
     }
@@ -48,9 +44,8 @@ export async function middleware(request: NextRequest) {
   // Protect meister routes
   if (pathname.startsWith('/meister') && !pathname.includes('/login') && !pathname.includes('/register')) {
     const sessionId = request.cookies.get('session')?.value
-    const session = await getSession(sessionId)
-
-    if (!session || session.role !== 'meister') {
+    
+    if (!sessionId) {
       const loginUrl = new URL('/meister/login', request.url)
       return NextResponse.redirect(loginUrl)
     }

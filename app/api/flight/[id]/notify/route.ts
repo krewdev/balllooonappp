@@ -7,7 +7,7 @@ import { getSession } from "@/lib/sessions"
 let twilioClient: any = null
 const twSid = process.env.TWILIO_ACCOUNT_SID
 const twToken = process.env.TWILIO_AUTH_TOKEN
-const twFrom = process.env.TWILIO_FROM_NUMBER
+const twFrom = process.env.TWILIO_PHONE_NUMBER
 if (twSid && twToken) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires

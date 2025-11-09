@@ -56,7 +56,7 @@ export async function POST(request: Request) {
           const passengerFirstName = fullName.split(' ')[0];
           const pilotFirstName = pilot.fullName.split(' ')[0];
           
-          const message = `Welcome to FlyingHotAir, ${passengerFirstName}! 🎈\n\nYou've successfully registered with pilot ${pilot.fullName}. You'll receive SMS notifications when ${pilotFirstName} has flights available for booking.\n\nKeep an eye on your phone for exclusive flight opportunities!`;
+          const message = `Welcome to FlyingHotAir, ${passengerFirstName}!\n\nYou've successfully registered with pilot ${pilot.fullName}. You'll receive SMS notifications when ${pilotFirstName} has flights available for booking.\n\nKeep an eye on your phone for exclusive flight opportunities!`;
           
           await twilioClient.messages.create({
             body: message,
