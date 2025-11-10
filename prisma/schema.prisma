@@ -121,6 +121,20 @@ model Comment {
   updatedAt DateTime @updatedAt
 }
 
+model Review {
+  id          String    @id @default(cuid())
+  pilot       Pilot     @relation(fields: [pilotId], references: [id])
+  pilotId     String
+  passenger   Passenger @relation(fields: [passengerId], references: [id])
+  passengerId String
+  booking     Booking?  @relation(fields: [bookingId], references: [id])
+  bookingId   String?
+  rating      Int
+  content     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 model Admin {
   id           String   @id @default(cuid())
   email        String   @unique

@@ -9,6 +9,7 @@ export default function MeisterRegisterPage() {
           <p className="text-pretty text-muted-foreground">
             Coordinate hot air balloon events at your festival with our premium services for Balloonmeisters
           </p>
+          <p className="mt-2 text-sm font-medium text-foreground/80">Coming soon</p>
         </div>
         <MeisterRegistrationForm />
       </div>

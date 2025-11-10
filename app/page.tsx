@@ -27,7 +27,7 @@ export default function HomePage() {
             <BrandTitle />
             <p className="mb-6 text-pretty text-lg text-muted-foreground md:text-xl">
               The premier platform connecting hot air balloon pilots with passengers and festival organizers. Book
-              breathtaking balloon flights, manage availability, and grow your pilot business with FLY HOT AIR!.
+              breathtaking balloon flights, manage availability, and grow your pilot business with Flying Hot Air.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
               <Button asChild size="lg" className="text-lg">
@@ -48,7 +48,7 @@ export default function HomePage() {
       {/* Features Section */}
       <section className="container mx-auto px-4 py-16 md:py-24">
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-balance text-3xl font-bold md:text-4xl">How FLY HOT AIR Works</h2>
+          <h2 className="mb-4 text-balance text-3xl font-bold md:text-4xl">How Flying Hot Air Works</h2>
           <p className="text-pretty text-muted-foreground">
             Connecting the hot air balloon community with seamless technology!
           </p>
@@ -123,7 +123,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="mb-4 text-balance text-3xl font-bold md:text-4xl">Ready to Soar?</h2>
           <p className="mb-8 text-pretty text-muted-foreground">
-            Join the FLY HOT AIR! community and bring unforgettable balloon experiences to your customers.
+            Join the Flying Hot Air community and bring unforgettable balloon experiences to your customers.
           </p>
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Button asChild size="lg">
