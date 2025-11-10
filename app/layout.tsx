@@ -12,11 +12,14 @@ const fontSans = FontSans({
 })
  
 export const metadata: Metadata = {
-  title: 'Flying Hot Air',
+  title: 'FlyingHotAir!',
   description: 'Experience the sky with Flying Hot Air - connect pilots and passengers for unforgettable balloon rides',
   generator: 'v0.app',
   icons: {
     icon: '/logo1.png',
+    shortcut: '/logo1.png',
+    apple: '/logo1.png',
+    other: [{ rel: 'icon', url: '/logo1.png' }],
   },
 }
 
