@@ -3,8 +3,9 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/sessions'
 import { cookies } from 'next/headers'
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
   try {
+    const params = await props.params
     const cookieStore = await cookies();
     const session = await getSession(cookieStore.get('session')?.value);
 

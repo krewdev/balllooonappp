@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/prisma'
 import { create } from './actions'
 
+// Force dynamic rendering to avoid build-time database access
+export const dynamic = 'force-dynamic'
+
 export default async function CommentsPage() {
   const comments = await prisma.comment.findMany({
     orderBy: {
