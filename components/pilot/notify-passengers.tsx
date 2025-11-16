@@ -135,13 +135,13 @@ export default function NotifyPassengers({ flightId }: Props) {
     })
     const price = (flight.priceCents / 100).toFixed(2)
     
-    let message = `Hello [Passenger Name]! 🎈\n\n${pilotName} has a hot air balloon flight available!\n\n📍 ${flight.title}\n📅 ${flightDate}\n🗺️ ${flight.location}\n💰 $${price}`
+  let message = `Hello [Passenger Name]!\n\n${pilotName} has a hot air balloon flight available.\n\n${flight.title}\n${flightDate}\n${flight.location}\n$${price}`
     
     if (customMessage) {
       message += `\n\n${customMessage}`
     }
     
-    message += `\n\n🎟️ Reserve your spot: ${flight.stripePayLink}`
+  message += `\n\nReserve your spot: ${flight.stripePayLink}`
     
     return message
   }
@@ -176,7 +176,7 @@ export default function NotifyPassengers({ flightId }: Props) {
             <CardTitle className="text-sm font-medium">Message Preview</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="whitespace-pre-wrap text-sm font-mono bg-white p-4 rounded border">
+            <div className="whitespace-pre-wrap text-sm font-mono bg-white dark:bg-slate-900 text-foreground p-4 rounded border border-gray-200 dark:border-gray-700 shadow-sm">
               {getPreviewMessage()}
             </div>
           </CardContent>

@@ -24,8 +24,8 @@ export function PilotRegistrationForm() {
     // Step 2: Personal Info
     fullName: "",
     phone: "",
-  // NEW: body weight (kg)
-  weightKg: "",
+  // NEW: body weight in lbs (we'll convert to kg on submit)
+  weightLbs: "",
     // Step 3: License & Certification
     licenseNumber: "",
     licenseExpiry: "",
@@ -67,7 +67,10 @@ export function PilotRegistrationForm() {
           password: formData.password,
           fullName: formData.fullName,
           phone: formData.phone,
-          weightKg: formData.weightKg,
+          // Convert lbs -> kg for storage (rounded to nearest integer)
+          weightKg: formData.weightLbs
+            ? Math.round(parseFloat(String(formData.weightLbs)) / 2.20462)
+            : undefined,
           licenseNumber: formData.licenseNumber,
           licenseExpiry: formData.licenseExpiry,
           yearsExperience: formData.yearsExperience,
@@ -206,15 +209,15 @@ export function PilotRegistrationForm() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="weightKg">Body Weight (kg)</Label>
+                <Label htmlFor="weightLbs">Body Weight (lbs)</Label>
                 <Input
-                  id="weightKg"
+                  id="weightLbs"
                   type="number"
-                  placeholder="75"
-                  value={formData.weightKg}
-                  onChange={(e) => updateFormData("weightKg", e.target.value)}
-                  min="30"
-                  max="300"
+                  placeholder="165"
+                  value={formData.weightLbs}
+                  onChange={(e) => updateFormData("weightLbs", e.target.value)}
+                  min="66"
+                  max="660"
                 />
                 <p className="text-sm text-muted-foreground">Optional — helps with weight/balance calculations</p>
               </div>

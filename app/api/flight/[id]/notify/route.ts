@@ -2,19 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { cookies } from "next/headers"
 import { getSession } from "@/lib/sessions"
-
-// Optional Twilio SMS integration
-let twilioClient: any = null
-const twSid = process.env.TWILIO_ACCOUNT_SID
-const twToken = process.env.TWILIO_AUTH_TOKEN
-const twFrom = process.env.TWILIO_PHONE_NUMBER
-if (twSid && twToken) {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const Twilio = require("twilio")
-    twilioClient = Twilio(twSid, twToken)
-  } catch {}
-}
+import { twilioClient } from "@/lib/twilio"
 
 export async function POST(
   req: Request,
@@ -79,11 +67,12 @@ export async function POST(
       else invalid.push(raw)
     }
 
+    const fromNumber = process.env.TWILIO_PHONE_NUMBER || process.env.TWILIO_FROM_NUMBER
     const results: any[] = []
     for (const to of valid) {
-      if (twilioClient && twFrom) {
+      if (twilioClient && fromNumber) {
         try {
-          const m = await twilioClient.messages.create({ from: twFrom, to, body: msg })
+          const m = await twilioClient.messages.create({ from: fromNumber, to, body: msg })
           results.push({ to, sid: m.sid })
         } catch (e: any) {
           results.push({ to, error: e?.message || "send failed" })

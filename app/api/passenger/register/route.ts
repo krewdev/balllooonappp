@@ -58,11 +58,14 @@ export async function POST(request: Request) {
           
           const message = `Welcome to FlyingHotAir, ${passengerFirstName}!\n\nYou've successfully registered with pilot ${pilot.fullName}. You'll receive SMS notifications when ${pilotFirstName} has flights available for booking.\n\nKeep an eye on your phone for exclusive flight opportunities!`;
           
-          await twilioClient.messages.create({
-            body: message,
-            from: process.env.TWILIO_PHONE_NUMBER,
-            to: phone,
-          });
+          const fromNumber = process.env.TWILIO_PHONE_NUMBER || process.env.TWILIO_FROM_NUMBER;
+          if (fromNumber) {
+            await twilioClient.messages.create({
+              body: message,
+              from: fromNumber,
+              to: phone,
+            });
+          }
         }
       } catch (smsError) {
         // Don't fail registration if SMS fails, just log it
