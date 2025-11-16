@@ -6,7 +6,10 @@ let stripeInstance: Stripe | null = null
 
 function validateStripeKey() {
   if (!SECRET) {
-    throw new Error("STRIPE_SECRET_KEY is not set")
+    const envHint = process.env.NODE_ENV === "production" 
+      ? "Check your Vercel environment variables" 
+      : "Check your .env.local file";
+    throw new Error(`STRIPE_SECRET_KEY is not set. ${envHint}.`)
   }
   if (SECRET.startsWith("pk_")) {
     throw new Error(
@@ -15,8 +18,12 @@ function validateStripeKey() {
   }
   if (SECRET.includes("your_") || SECRET.includes("YOUR_") || SECRET.endsWith("_here")) {
     throw new Error(
-      "STRIPE_SECRET_KEY is set to a placeholder value. Please update .env.local with your actual Stripe secret key from https://dashboard.stripe.com/test/apikeys"
+      "STRIPE_SECRET_KEY is set to a placeholder value. Please update with your actual Stripe secret key from https://dashboard.stripe.com/test/apikeys"
     )
+  }
+  // Warn if using test key in production (but don't block)
+  if (process.env.NODE_ENV === "production" && SECRET.startsWith("sk_test_")) {
+    console.warn("⚠️  WARNING: Using Stripe TEST key in production. Switch to sk_live_ for production.")
   }
 }
 

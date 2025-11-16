@@ -44,10 +44,13 @@ export async function POST(req: Request) {
     }
 
     // 2. Create an account link for onboarding
+    // Use NEXT_PUBLIC_BASE_URL if set, otherwise fall back to request origin
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || new URL(req.url).origin;
+    
     // The URL the user will be redirected to after the onboarding is complete.
-    const returnUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/pilot/dashboard?stripe_return=true`;
+    const returnUrl = `${baseUrl}/pilot/dashboard?stripe_return=true`;
     // The URL the user will be redirected to if they fail or cancel the onboarding.
-    const refreshUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/pilot/dashboard?stripe_refresh=true`;
+    const refreshUrl = `${baseUrl}/pilot/dashboard?stripe_refresh=true`;
 
     const accountLink = await stripe.accountLinks.create({
       account: accountId,
@@ -62,9 +65,29 @@ export async function POST(req: Request) {
     console.error("Stripe onboarding error:", error);
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(
-      { error: "Failed to create Stripe onboarding link.", details: errorMessage },
-      { status: 500 }
-    );
+    
+    // Provide more detailed error information in development
+    const errorDetails: any = {
+      error: "Failed to create Stripe onboarding link.",
+      details: errorMessage,
+    };
+    
+    // Add helpful diagnostics in development
+    if (process.env.NODE_ENV !== "production") {
+      errorDetails.diagnostics = {
+        hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
+        baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "not set (using request origin)",
+        requestOrigin: new URL(req.url).origin,
+      };
+    }
+    
+    // Check for common issues
+    if (errorMessage.includes("No such account") || errorMessage.includes("does not have access")) {
+      errorDetails.hint = "Stripe account access issue. The account may have been created with different API keys.";
+    } else if (errorMessage.includes("Invalid API Key")) {
+      errorDetails.hint = "Check that STRIPE_SECRET_KEY is set correctly in production environment variables.";
+    }
+    
+    return NextResponse.json(errorDetails, { status: 500 });
   }
 }
