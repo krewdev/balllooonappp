@@ -78,11 +78,21 @@ export default async function PilotDashboardPage() {
   const stripeStatus = await getStripeStatus(pilot.stripeAccountId);
   const canCreateFlights = pilot.approved && stripeStatus.onboarded;
 
+  // Serialize pilot object for client components (only pass what's needed)
+  const serializedPilot = {
+    id: pilot.id,
+    stripeAccountId: pilot.stripeAccountId,
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
       {/* Onboarding Tutorial - shows automatically for newly approved pilots */}
       <OnboardingTutorialWrapper 
-        pilot={pilot} 
+        pilot={{
+          id: pilot.id,
+          stripeAccountId: pilot.stripeAccountId,
+          approved: pilot.approved,
+        }}
         stripeOnboarded={stripeStatus.onboarded}
       />
 
@@ -115,7 +125,7 @@ export default async function PilotDashboardPage() {
           </Card>
         )}
 
-        {pilot.approved && <StripeOnboarding pilot={pilot} />}
+        {pilot.approved && <StripeOnboarding pilot={serializedPilot as Pilot} />}
       </div>
 
       {/* Main Content Grid */}
