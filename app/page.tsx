@@ -29,15 +29,12 @@ export default function HomePage() {
               The premier platform connecting hot air balloon pilots with passengers and festival organizers. Book
               breathtaking balloon flights, manage availability, and grow your pilot business with Flying Hot Air.
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Button asChild size="lg" className="text-lg">
                 <Link href="/pilot/register">Join as Pilot</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="text-lg">
                 <Link href="/pilot/how-it-works">How It Works</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="text-lg bg-transparent">
-                <Link href="/passenger/register">Find Flights</Link>
               </Button>
             </div>
           </div>

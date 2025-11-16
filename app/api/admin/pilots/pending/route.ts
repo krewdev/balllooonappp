@@ -28,11 +28,25 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Use typed Prisma client now that migrations/generate have been run
-    const pilots = await (prisma as any).pilot.findMany({
+    const pilots = await prisma.pilot.findMany({
       where: { approved: false },
       orderBy: { createdAt: 'asc' },
-      select: { id: true, email: true, fullName: true, phone: true, createdAt: true },
+      select: { 
+        id: true, 
+        email: true, 
+        fullName: true, 
+        phone: true, 
+        createdAt: true,
+        licenseNumber: true,
+        licenseExpiry: true,
+        yearsExperience: true,
+        totalFlightHours: true,
+        insuranceProvider: true,
+        insurancePolicyNumber: true,
+        insuranceExpiry: true,
+        balloonRegistration: true,
+        balloonCapacity: true,
+      },
     })
 
     return NextResponse.json(pilots)

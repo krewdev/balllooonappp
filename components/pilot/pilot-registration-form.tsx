@@ -28,7 +28,6 @@ export function PilotRegistrationForm() {
   weightLbs: "",
     // Step 3: License & Certification
     licenseNumber: "",
-    licenseExpiry: "",
     yearsExperience: "",
     totalFlightHours: "",
     // Step 4: Insurance & Balloon Info
@@ -72,7 +71,6 @@ export function PilotRegistrationForm() {
             ? Math.round(parseFloat(String(formData.weightLbs)) / 2.20462)
             : undefined,
           licenseNumber: formData.licenseNumber,
-          licenseExpiry: formData.licenseExpiry,
           yearsExperience: formData.yearsExperience,
           totalFlightHours: formData.totalFlightHours,
           insuranceProvider: formData.insuranceProvider,
@@ -235,16 +233,6 @@ export function PilotRegistrationForm() {
                   placeholder="FAA-12345678"
                   value={formData.licenseNumber}
                   onChange={(e) => updateFormData("licenseNumber", e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="licenseExpiry">License Expiry Date</Label>
-                <Input
-                  id="licenseExpiry"
-                  type="date"
-                  value={formData.licenseExpiry}
-                  onChange={(e) => updateFormData("licenseExpiry", e.target.value)}
                   required
                 />
               </div>

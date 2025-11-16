@@ -47,9 +47,9 @@ export function PilotApprovalList() {
       try {
         const res = await fetch("/api/admin/pilots/pending", {
           headers: {
-            // This is for local dev convenience, can be removed if you have proper session management
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN || ''}`,
           },
+          credentials: 'include',
         })
         if (!res.ok) {
           throw new Error(`Failed to fetch: ${res.statusText}`)
@@ -74,8 +74,9 @@ export function PilotApprovalList() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN || ''}`,
         },
+        credentials: 'include',
         body: JSON.stringify({ id: pilotId }),
       })
 
