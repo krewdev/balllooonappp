@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from '@/lib/sessions'
 import { prisma } from '@/lib/prisma'
+import crypto from 'crypto'
 
 export async function POST(req: Request) {
   try {
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
     // Ensure passenger has at least one paid booking with this pilot (bookingId optional)
     const passengerId = session.pilotId // sessions store userId in pilotId field
 
-    const bookingWhere: any = { passengerId, flight: { pilotId } }
+    const bookingWhere: any = { passengerId, Flight: { pilotId } }
     if (bookingId) bookingWhere.id = bookingId
 
     const paidBooking = await prisma.booking.findFirst({ where: { ...bookingWhere, paid: true } })
@@ -30,11 +31,14 @@ export async function POST(req: Request) {
 
     const review = await prisma.review.create({
       data: {
+        id: crypto.randomUUID(),
         pilotId,
         passengerId,
         bookingId: paidBooking.id,
         rating: Math.max(1, Math.min(5, Number(rating))),
         content: content || null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }
     })
     // Add the review to the pilot's reviews relation (if needed, but Prisma handles this automatically via relations)

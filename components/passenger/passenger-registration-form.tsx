@@ -41,6 +41,7 @@ export function PassengerRegistrationForm({
     zipCode: "",
     pilotId: initialPilotId || "",
   })
+  const [selectedPilotName, setSelectedPilotName] = useState<string>("")
 
   useEffect(() => {
     const fetchPilots = async () => {
@@ -49,12 +50,20 @@ export function PassengerRegistrationForm({
         if (!response.ok) throw new Error("Failed to fetch pilots")
         const data = await response.json()
         setPilots(data)
+        
+        // If pilotId was prefilled from QR code, find and set the pilot name
+        if (initialPilotId) {
+          const prefilledPilot = data.find((p: Pilot) => p.id === initialPilotId)
+          if (prefilledPilot) {
+            setSelectedPilotName(prefilledPilot.fullName)
+          }
+        }
       } catch (err) {
         console.error(err)
       }
     }
     fetchPilots()
-  }, [])
+  }, [initialPilotId])
 
   const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -62,6 +71,10 @@ export function PassengerRegistrationForm({
 
   const handlePilotChange = (pilotId: string) => {
     updateFormData("pilotId", pilotId)
+    const pilot = pilots.find((p) => p.id === pilotId)
+    if (pilot) {
+      setSelectedPilotName(pilot.fullName)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,6 +128,11 @@ export function PassengerRegistrationForm({
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="pilot">Preferred Pilot</Label>
+            {initialPilotId && selectedPilotName && (
+              <p className="text-sm text-muted-foreground mb-2">
+                ✓ Pilot pre-selected from QR code: <span className="font-semibold">{selectedPilotName}</span>
+              </p>
+            )}
             <Select onValueChange={handlePilotChange} value={formData.pilotId}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a pilot..." />

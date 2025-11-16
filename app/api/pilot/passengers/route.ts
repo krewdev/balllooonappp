@@ -30,8 +30,8 @@ export async function GET(request: Request) {
 
     // Passengers who have bookings on flights owned by this pilot
     const bookings = await prisma.booking.findMany({
-      where: { flight: { pilotId } },
-      include: { passenger: true },
+      where: { Flight: { pilotId } },
+      include: { Passenger: true },
       orderBy: { createdAt: 'desc' }
     })
 
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
     }
 
     for (const b of bookings) {
-      const passenger = b.passenger
+      const passenger = b.Passenger
       if (!map.has(passenger.id)) {
         map.set(passenger.id, {
           id: passenger.id,

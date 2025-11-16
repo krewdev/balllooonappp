@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import crypto from 'crypto'
 
 type CreateBookingBody = {
   flightId: string
@@ -43,11 +44,14 @@ export async function POST(req: Request) {
         pilotId: flight.pilotId,
       },
       create: {
+        id: crypto.randomUUID(),
         email,
         fullName: fullName || null,
         phone: phone || 'no-phone',
         location: '',
         pilotId: flight.pilotId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     })
 
@@ -59,10 +63,13 @@ export async function POST(req: Request) {
 
   const booking = await (prisma as any).booking.create({
       data: {
+        id: crypto.randomUUID(),
         flightId,
         passengerId: passenger.id,
         status: 'pending',
         paid: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     })
 

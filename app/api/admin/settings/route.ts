@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/sessions";
 import { cookies } from "next/headers";
+import crypto from "crypto";
 
 export async function GET() {
   try {
@@ -62,9 +63,11 @@ export async function PUT(request: Request) {
         updatedBy: session.userId,
       },
       create: {
+        id: crypto.randomUUID(),
         key,
         value: String(value),
         updatedBy: session.userId,
+        updatedAt: new Date(),
       },
     });
 

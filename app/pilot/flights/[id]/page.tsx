@@ -38,9 +38,9 @@ export default async function FlightDetailPage({ params }: Props) {
   const flight = await prisma.flight.findUnique({
     where: { id, pilotId: session.userId },
     include: {
-      bookings: {
+      Booking: {
         include: {
-          passenger: {
+          Passenger: {
             select: { fullName: true, email: true },
           },
         },
@@ -103,7 +103,7 @@ export default async function FlightDetailPage({ params }: Props) {
                 </div>
                 <div>
                   <h3 className="font-medium text-muted-foreground">Capacity</h3>
-                  <p className="text-xl font-semibold">{flight.bookings.length} / {flight.maxPassengers}</p>
+                  <p className="text-xl font-semibold">{flight.Booking.length} / {flight.maxPassengers}</p>
                 </div>
               </div>
             </CardContent>
@@ -127,19 +127,19 @@ export default async function FlightDetailPage({ params }: Props) {
             <CardHeader>
               <CardTitle>Bookings</CardTitle>
               <CardDescription>
-                {flight.bookings.length} of {flight.maxPassengers} seats booked.
+                {flight.Booking.length} of {flight.maxPassengers} seats booked.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {flight.bookings.length === 0 ? (
+              {flight.Booking.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">No bookings yet.</p>
               ) : (
                 <ul className="space-y-3">
-                  {flight.bookings.map((booking) => (
+                  {flight.Booking.map((booking) => (
                     <li key={booking.id} className="border rounded-lg p-3 text-sm flex items-center justify-between">
                       <div>
-                        <p className="font-semibold">{booking.passenger?.fullName || 'Unnamed Passenger'}</p>
-                        <p className="text-muted-foreground">{booking.passenger?.email}</p>
+                        <p className="font-semibold">{booking.Passenger?.fullName || 'Unnamed Passenger'}</p>
+                        <p className="text-muted-foreground">{booking.Passenger?.email}</p>
                       </div>
                       <Badge variant={booking.status === 'confirmed' ? 'default' : 'secondary'}>
                         {booking.status}

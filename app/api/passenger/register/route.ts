@@ -2,8 +2,28 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { twilioClient } from "@/lib/twilio";
+import crypto from "crypto";
+import { checkRateLimit, rateLimitConfigs } from "@/lib/rate-limit";
+import { validateEmail, validatePhone, validateZipCode, sanitizeString, validatePassword } from "@/lib/validation";
 
 export async function POST(request: Request) {
+  // Rate limiting
+  const rateLimit = checkRateLimit(request, rateLimitConfigs.registration);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { 
+        error: "Too many registration attempts. Please try again later.",
+        retryAfter: rateLimit.retryAfter 
+      },
+      { 
+        status: 429,
+        headers: {
+          'Retry-After': String(rateLimit.retryAfter || 3600),
+        }
+      }
+    );
+  }
+
   try {
     const body = await request.json();
     const { fullName, email, password, weightLbs, phone, zipCode, pilotId } = body;
@@ -15,8 +35,38 @@ export async function POST(request: Request) {
       );
     }
 
+    // Validate and sanitize inputs
+    const validatedEmail = validateEmail(email);
+    if (!validatedEmail) {
+      return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+    }
+
+    const validatedPhone = validatePhone(phone);
+    if (!validatedPhone) {
+      return NextResponse.json({ error: "Invalid phone number format" }, { status: 400 });
+    }
+
+    const validatedZipCode = validateZipCode(zipCode);
+    if (!validatedZipCode) {
+      return NextResponse.json({ error: "Invalid ZIP code format" }, { status: 400 });
+    }
+
+    const sanitizedFullName = sanitizeString(fullName);
+
+    // Validate password complexity
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+      return NextResponse.json(
+        { 
+          error: "Password does not meet requirements",
+          details: passwordValidation.errors
+        },
+        { status: 400 }
+      );
+    }
+
     const existingPassenger = await prisma.passenger.findUnique({
-      where: { email },
+      where: { email: validatedEmail },
     });
 
     if (existingPassenger) {
@@ -33,13 +83,16 @@ export async function POST(request: Request) {
 
     const passenger = await prisma.passenger.create({
       data: {
-        fullName,
-        email,
+        id: crypto.randomUUID(),
+        fullName: sanitizedFullName,
+        email: validatedEmail,
         passwordHash,
         weightKg,
-        phone,
-        location: zipCode,
+        phone: validatedPhone,
+        location: validatedZipCode,
         pilotId: pilotId || null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     });
 

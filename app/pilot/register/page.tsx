@@ -1,5 +1,6 @@
 import { PilotRegistrationForm } from "@/components/pilot/pilot-registration-form"
 import { Button } from "@/components/ui/button"
+import { BackButton } from "@/components/ui/back-button"
 import { Info } from "lucide-react"
 import Link from "next/link"
 
@@ -7,6 +8,9 @@ export default function PilotRegisterPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="mx-auto max-w-3xl">
+        <div className="mb-6">
+          <BackButton fallback="/" />
+        </div>
         <div className="mb-8 text-center">
           <h1 className="mb-4 text-balance text-4xl font-bold">Pilot Registration</h1>
           <p className="text-pretty text-muted-foreground">

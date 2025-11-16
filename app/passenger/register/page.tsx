@@ -1,4 +1,5 @@
 import { PassengerRegistrationForm } from "@/components/passenger/passenger-registration-form";
+import { BackButton } from "@/components/ui/back-button";
 
 export default async function PassengerRegisterPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -10,6 +11,9 @@ export default async function PassengerRegisterPage(props: {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="mx-auto max-w-2xl">
+        <div className="mb-6">
+          <BackButton fallback="/" />
+        </div>
         <div className="mb-8 text-center">
           <h1 className="mb-4 text-balance text-4xl font-bold">
             Passenger Sign-Up

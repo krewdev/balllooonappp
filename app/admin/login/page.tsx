@@ -35,8 +35,8 @@ export default function AdminLoginPage() {
         return
       }
 
-      router.push("/admin")
-      router.refresh()
+      // Use window.location to ensure cookie is properly sent with redirect
+      window.location.href = "/admin"
     } catch (err) {
       setError("An error occurred. Please try again.")
       setLoading(false)

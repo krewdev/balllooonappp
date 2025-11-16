@@ -2,8 +2,27 @@ import { NextResponse } from "next/server";
 import { createSession } from "@/lib/sessions";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { checkRateLimit, rateLimitConfigs } from "@/lib/rate-limit";
+import { validateEmail } from "@/lib/validation";
 
 export async function POST(req: Request) {
+  // Rate limiting
+  const rateLimit = checkRateLimit(req, rateLimitConfigs.login);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { 
+        error: "Too many login attempts. Please try again later.",
+        retryAfter: rateLimit.retryAfter 
+      },
+      { 
+        status: 429,
+        headers: {
+          'Retry-After': String(rateLimit.retryAfter || 900),
+        }
+      }
+    );
+  }
+
   try {
     const body = await req.json();
     const { email, password, role } = body; // role can be 'pilot' or 'passenger'
@@ -15,11 +34,20 @@ export async function POST(req: Request) {
       );
     }
 
+    // Validate and sanitize email
+    const validatedEmail = validateEmail(email);
+    if (!validatedEmail) {
+      return NextResponse.json(
+        { error: "Invalid email format" },
+        { status: 400 }
+      );
+    }
+
     let user: { id: string; passwordHash: string | null; blocked?: boolean; approved?: boolean } | null = null;
 
     if (role === "pilot") {
       user = await prisma.pilot.findUnique({
-        where: { email },
+        where: { email: validatedEmail },
         select: { id: true, passwordHash: true, blocked: true, approved: true },
       });
       
@@ -32,7 +60,7 @@ export async function POST(req: Request) {
       }
     } else if (role === "passenger") {
       user = await prisma.passenger.findUnique({
-        where: { email },
+        where: { email: validatedEmail },
         select: { id: true, passwordHash: true, blocked: true },
       });
     } else {

@@ -92,9 +92,9 @@ export function StripeOnboarding({ pilot }: StripeOnboardingProps) {
         throw new Error(data?.error || data?.details || `Failed to start onboarding (status ${res.status})`);
       }
 
-      // Redirect the user to the Stripe onboarding URL
+      // Redirect the user to the Stripe onboarding URL (external URL, must use window.location)
       if (data.url) {
-        router.push(data.url);
+        window.location.href = data.url;
       } else {
         throw new Error("Onboarding URL not found.");
       }

@@ -16,10 +16,10 @@ export async function GET() {
     const passengers = await prisma.passenger.findMany({
       orderBy: { createdAt: "desc" },
       include: {
-        pilot: {
+        Pilot: {
           select: { fullName: true, email: true },
         },
-        bookings: {
+        Booking: {
           select: { id: true },
         },
       },

@@ -22,18 +22,18 @@ export async function POST(
       where: {
         flightId,
         paid: true,
-        passenger: {
+        Passenger: {
           phone: { contains: phoneNorm },
         },
       },
-      include: { passenger: true, flight: true },
+      include: { Passenger: true, Flight: true },
     })
 
     if (!booking) {
       return NextResponse.json({ ok: false, error: "No paid booking found for provided details" }, { status: 404 })
     }
 
-    const passengerLast = (booking.passenger?.fullName || "")
+    const passengerLast = (booking.Passenger?.fullName || "")
       .split(/\s+/)
       .pop()
       ?.toLowerCase()
@@ -45,11 +45,11 @@ export async function POST(
     return NextResponse.json({
       ok: true,
       flight: {
-        id: booking.flight.id,
-        title: booking.flight.title,
-        date: booking.flight.date,
-        location: booking.flight.location,
-        description: booking.flight.description,
+        id: booking.Flight.id,
+        title: booking.Flight.title,
+        date: booking.Flight.date,
+        location: booking.Flight.location,
+        description: booking.Flight.description,
       },
       booking: {
         id: booking.id,
@@ -57,8 +57,8 @@ export async function POST(
         paid: booking.paid,
       },
       passenger: {
-        id: booking.passenger.id,
-        fullName: booking.passenger.fullName,
+        id: booking.Passenger.id,
+        fullName: booking.Passenger.fullName,
       },
     })
   } catch (err) {

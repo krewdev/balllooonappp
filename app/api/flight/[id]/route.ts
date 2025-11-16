@@ -8,7 +8,7 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
     const flight = await prisma.flight.findUnique({ 
       where: { id },
       include: {
-        pilot: {
+        Pilot: {
           select: {
             fullName: true,
             phone: true

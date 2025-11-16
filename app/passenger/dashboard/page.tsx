@@ -25,17 +25,17 @@ export default async function PassengerDashboardPage() {
   const passenger = await prisma.passenger.findUnique({
     where: { id: session.userId },
     include: {
-      bookings: {
+      Booking: {
         where: { status: "confirmed" },
         include: {
-          flight: {
+          Flight: {
             include: {
-              pilot: true,
+              Pilot: true,
             },
           },
         },
         orderBy: {
-          flight: {
+          Flight: {
             date: "asc",
           },
         },
@@ -52,7 +52,7 @@ export default async function PassengerDashboardPage() {
     )
   }
 
-  const hasBookings = passenger.bookings.length > 0
+  const hasBookings = passenger.Booking.length > 0
 
   if (!hasBookings) {
     return (
@@ -98,20 +98,20 @@ export default async function PassengerDashboardPage() {
             <CardDescription>Your scheduled balloon rides</CardDescription>
           </CardHeader>
           <CardContent>
-            {passenger.bookings.length > 0 ? (
+            {passenger.Booking.length > 0 ? (
               <ul className="space-y-4">
-                {passenger.bookings.map((booking) => (
+                {passenger.Booking.map((booking) => (
                   <li key={booking.id} className="rounded-lg border p-4">
-                    <h4 className="font-semibold">{booking.flight.title}</h4>
+                    <h4 className="font-semibold">{booking.Flight.title}</h4>
                     <p className="text-sm text-muted-foreground">
-                      with {booking.flight.pilot.fullName}
+                      with {booking.Flight.Pilot.fullName}
                     </p>
                     <p className="text-sm">
-                      {new Date(booking.flight.date).toLocaleString()}
+                      {new Date(booking.Flight.date).toLocaleString()}
                     </p>
-                    <p className="text-sm">Location: {booking.flight.location}</p>
+                    <p className="text-sm">Location: {booking.Flight.location}</p>
                     <Button asChild size="sm" className="mt-2">
-                      <Link href={`/flight/${booking.flight.id}/status`}>View Flight Status</Link>
+                      <Link href={`/flight/${booking.Flight.id}/status`}>View Flight Status</Link>
                     </Button>
                   </li>
                 ))}

@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { getStripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/sessions'
+import crypto from 'crypto'
 
 export async function POST(req: Request) {
   const cookieStore = await cookies();
@@ -51,6 +52,7 @@ export async function POST(req: Request) {
     // Persist flight in DB attached to the authenticated pilot
     const flight = await prisma.flight.create({
       data: {
+        id: crypto.randomUUID(),
         pilotId: session.userId,
         title,
         description,
@@ -61,6 +63,8 @@ export async function POST(req: Request) {
         stripeProductId: product.id,
         stripePriceId: price.id,
         stripePayLink: payLink.url,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     });
 

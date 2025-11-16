@@ -22,7 +22,7 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
     const bookings = await (prisma as any).booking.findMany({
       where: { flightId: id },
       orderBy: { createdAt: 'desc' },
-      include: { passenger: { select: { id: true, email: true, fullName: true, phone: true } } },
+      include: { Passenger: { select: { id: true, email: true, fullName: true, phone: true } } },
     })
 
     return NextResponse.json({ ok: true, bookings })

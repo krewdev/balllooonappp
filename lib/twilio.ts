@@ -8,11 +8,14 @@ const useMockTwilio = process.env.MOCK_TWILIO === 'true';
 const mockTwilioClient = {
   messages: {
     create: async (options: any) => {
-      console.log('📱 [MOCK SMS] Would send SMS:', {
-        to: options.to,
-        from: options.from,
-        body: options.body?.substring(0, 100) + '...'
-      });
+      // Only log mock SMS in development
+      if (process.env.NODE_ENV !== "production") {
+        console.log('📱 [MOCK SMS] Would send SMS:', {
+          to: options.to,
+          from: options.from,
+          body: options.body?.substring(0, 100) + '...'
+        });
+      }
       return {
         sid: 'MOCK_' + Date.now(),
         status: 'queued',
@@ -32,7 +35,10 @@ function getTwilioClient() {
   }
 
   if (useMockTwilio) {
-    console.log('⚠️  Using MOCK Twilio client (no real SMS will be sent)');
+    // Only log mock warning in development
+    if (process.env.NODE_ENV !== "production") {
+      console.log('⚠️  Using MOCK Twilio client (no real SMS will be sent)');
+    }
     twilioClientInstance = mockTwilioClient;
     return twilioClientInstance;
   }

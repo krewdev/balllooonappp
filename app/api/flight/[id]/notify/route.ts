@@ -3,11 +3,30 @@ import { prisma } from "@/lib/prisma"
 import { cookies } from "next/headers"
 import { getSession } from "@/lib/sessions"
 import { twilioClient } from "@/lib/twilio"
+import { checkRateLimit, rateLimitConfigs } from "@/lib/rate-limit"
 
 export async function POST(
   req: Request,
   props: { params: Promise<{ id: string }> }
 ) {
+  // Rate limiting for SMS sending
+  const rateLimit = checkRateLimit(req, rateLimitConfigs.sms);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { 
+        ok: false,
+        error: "Too many SMS requests. Please try again later.",
+        retryAfter: rateLimit.retryAfter 
+      },
+      { 
+        status: 429,
+        headers: {
+          'Retry-After': String(rateLimit.retryAfter || 3600),
+        }
+      }
+    );
+  }
+
   try {
     const params = await props.params
     const flightId = params.id
@@ -24,7 +43,7 @@ export async function POST(
       return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 })
     }
 
-    const flight = await prisma.flight.findUnique({ where: { id: flightId }, include: { pilot: true } })
+    const flight = await prisma.flight.findUnique({ where: { id: flightId }, include: { Pilot: { select: { fullName: true } } } })
     if (!flight) return NextResponse.json({ ok: false, error: "flight not found" }, { status: 404 })
     if (flight.pilotId !== session.userId) {
       return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 })
@@ -78,7 +97,10 @@ export async function POST(
           results.push({ to, error: e?.message || "send failed" })
         }
       } else {
-        console.log("[notify] SMS (mock)", { to, body: msg })
+        // Only log mock SMS in development
+        if (process.env.NODE_ENV !== "production") {
+          console.log("[notify] SMS (mock)", { to, body: msg })
+        }
         results.push({ to, mocked: true })
       }
     }

@@ -23,7 +23,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
     const booking = await prisma.booking.findFirst({
       where: {
         passengerId,
-        flight: { pilotId }
+        Flight: { pilotId }
       }
     })
 

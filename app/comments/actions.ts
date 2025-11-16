@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import crypto from 'crypto'
 
 export async function create(formData: FormData) {
   const content = formData.get('content') as string
@@ -12,7 +13,10 @@ export async function create(formData: FormData) {
   
   await prisma.comment.create({
     data: {
+      id: crypto.randomUUID(),
       content: content.trim(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
   })
   

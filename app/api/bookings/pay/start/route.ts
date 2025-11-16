@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     const booking = await (prisma as any).booking.findUnique({
       where: { id: bookingId },
-      include: { flight: true, passenger: true },
+      include: { Flight: true, Passenger: true },
     })
 
     if (!booking) {
@@ -35,9 +35,9 @@ export async function POST(req: Request) {
     const success = successUrl || `${origin}/flight/${booking.flightId}/status`
     const cancel = cancelUrl || `${origin}/cancel`
 
-  const name = `Flight: ${booking.flight.title}`
-    const description = booking.flight.description || `Location: ${booking.flight.location}`
-    const unit_amount = booking.flight.priceCents
+  const name = `Flight: ${booking.Flight.title}`
+    const description = booking.Flight.description || `Location: ${booking.Flight.location}`
+    const unit_amount = booking.Flight.priceCents
 
     if (!Number.isFinite(unit_amount) || unit_amount <= 0) {
       return NextResponse.json({ ok: false, error: "invalid flight price" }, { status: 400 })
@@ -45,8 +45,8 @@ export async function POST(req: Request) {
 
     // Determine pilot's connected account (if onboarded)
     let destinationAccount: string | null = null
-    if (booking.flight?.pilotId) {
-      const pilot = await (prisma as any).pilot.findUnique({ where: { id: booking.flight.pilotId } })
+    if (booking.Flight?.pilotId) {
+      const pilot = await (prisma as any).pilot.findUnique({ where: { id: booking.Flight.pilotId } })
       destinationAccount = pilot?.stripeAccountId || null
     }
 
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
           },
         },
       ],
-      customer_email: booking.passenger?.email || undefined,
+      customer_email: booking.Passenger?.email || undefined,
     }
 
     // If pilot has a connected account, create a destination charge with application fee

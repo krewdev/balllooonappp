@@ -3,8 +3,26 @@ import { getSession } from "@/lib/sessions";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { twilioClient } from "@/lib/twilio";
+import { checkRateLimit, rateLimitConfigs } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
+  // Rate limiting for SMS sending
+  const rateLimit = checkRateLimit(req, rateLimitConfigs.sms);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { 
+        error: "Too many SMS requests. Please try again later.",
+        retryAfter: rateLimit.retryAfter 
+      },
+      { 
+        status: 429,
+        headers: {
+          'Retry-After': String(rateLimit.retryAfter || 3600),
+        }
+      }
+    );
+  }
+
   const cookieStore = await cookies();
   const session = await getSession(cookieStore.get("session")?.value);
 
@@ -33,7 +51,7 @@ export async function POST(req: Request) {
 
     const flight = await prisma.flight.findUnique({
       where: { id: flightId, pilotId: session.userId },
-      include: { pilot: true }
+      include: { Pilot: { select: { fullName: true } } }
     });
 
     if (!flight) {
@@ -49,7 +67,7 @@ export async function POST(req: Request) {
     });
 
     // Build the notification message template
-    const pilotName = flight.pilot.fullName || "Your pilot"
+    const pilotName = flight.Pilot.fullName || "Your pilot"
     const flightDate = new Date(flight.date).toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
@@ -85,7 +103,10 @@ export async function POST(req: Request) {
     let successfulNotifications = 0;
     results.forEach(result => {
       if (result.status === 'fulfilled') {
-        console.log(`Message sent successfully: SID ${result.value.sid}`);
+        // Only log success in development (errors always logged)
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`Message sent successfully: SID ${result.value.sid}`);
+        }
         successfulNotifications++;
       } else {
         console.error(`Failed to send message: ${result.reason}`);

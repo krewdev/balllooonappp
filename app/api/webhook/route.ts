@@ -28,13 +28,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
   }
 
-  console.log("[v0] Webhook event type:", event.type)
+  // Log webhook events in development only
+  if (process.env.NODE_ENV !== "production") {
+    console.log("[v0] Webhook event type:", event.type)
+  }
 
   try {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session
-        console.log("[v0] Checkout completed:", session.id)
+        if (process.env.NODE_ENV !== "production") {
+          console.log("[v0] Checkout completed:", session.id)
+        }
         const metadata = (session.metadata || {}) as Record<string, string>
         if (metadata.type === "booking" && metadata.bookingId) {
           try {
@@ -42,7 +47,9 @@ export async function POST(request: NextRequest) {
               where: { id: metadata.bookingId },
               data: { paid: true, status: "confirmed" },
             })
-            console.log("[v0] Booking marked paid:", metadata.bookingId)
+            if (process.env.NODE_ENV !== "production") {
+              console.log("[v0] Booking marked paid:", metadata.bookingId)
+            }
           } catch (e) {
             console.error("[v0] Failed to update booking on webhook:", metadata.bookingId, e)
           }
@@ -56,7 +63,9 @@ export async function POST(request: NextRequest) {
 
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription
-        console.log("[v0] Subscription updated:", subscription.id)
+        if (process.env.NODE_ENV !== "production") {
+          console.log("[v0] Subscription updated:", subscription.id)
+        }
 
         // TODO: Update pilot subscription status in database
 
@@ -65,7 +74,9 @@ export async function POST(request: NextRequest) {
 
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription
-        console.log("[v0] Subscription cancelled:", subscription.id)
+        if (process.env.NODE_ENV !== "production") {
+          console.log("[v0] Subscription cancelled:", subscription.id)
+        }
 
         // TODO: Update pilot subscription_status to 'cancelled' in database
 
@@ -74,7 +85,8 @@ export async function POST(request: NextRequest) {
 
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice
-        console.log("[v0] Payment failed:", invoice.id)
+        // Always log payment failures (important for production)
+        console.error("[v0] Payment failed:", invoice.id)
 
         // TODO: Notify pilot of payment failure
 
@@ -82,7 +94,9 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        console.log("[v0] Unhandled event type:", event.type)
+        if (process.env.NODE_ENV !== "production") {
+          console.log("[v0] Unhandled event type:", event.type)
+        }
     }
 
     return NextResponse.json({ received: true })
