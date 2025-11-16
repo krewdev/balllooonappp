@@ -104,8 +104,18 @@ export async function POST(req: Request) {
     
   } catch (err) {
     console.error("Login error:", err);
+    // Log more details in development
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Login error details:", {
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+      });
+    }
     return NextResponse.json(
-      { error: "An internal server error occurred" },
+      { 
+        error: "An internal server error occurred",
+        ...(process.env.NODE_ENV !== "production" && err instanceof Error ? { details: err.message } : {})
+      },
       { status: 500 }
     );
   }

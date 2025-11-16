@@ -77,11 +77,11 @@ export async function middleware(request: NextRequest) {
   // Content Security Policy (adjust as needed for your app)
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://vercel.live https://*.vercel.app",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self' data:",
-    "connect-src 'self' https://api.stripe.com https://*.twilio.com",
+    "connect-src 'self' https://api.stripe.com https://*.twilio.com https://vercel.live https://*.vercel.app https://vitals.vercel-insights.com",
     "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
     "object-src 'none'",
     "base-uri 'self'",

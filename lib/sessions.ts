@@ -17,6 +17,7 @@ const SESSION_TTL = 1000 * 60 * 60 * 24 * 7; // 7 days
 export async function createSession(userId: string, role = 'pilot'): Promise<string> {
   const sessionId = crypto.randomBytes(24).toString('hex');
   const expiresAt = new Date(Date.now() + SESSION_TTL);
+  const now = new Date();
   
   await prisma.session.create({
     data: {
@@ -24,6 +25,8 @@ export async function createSession(userId: string, role = 'pilot'): Promise<str
       userId,
       role,
       expiresAt,
+      createdAt: now,
+      updatedAt: now,
     },
   });
   

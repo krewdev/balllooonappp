@@ -30,14 +30,14 @@ export default function PilotLoginPage() {
 
       if (!res.ok) {
         setError(data?.error || "Login failed")
+        setLoading(false)
         return
       }
 
-      // Server sets an HttpOnly session cookie on success. Redirect to dashboard.
-      router.push("/pilot/dashboard")
+      // Use window.location to ensure cookie is properly sent with redirect
+      window.location.href = "/pilot/dashboard"
     } catch (err) {
       setError("Network error")
-    } finally {
       setLoading(false)
     }
   }
