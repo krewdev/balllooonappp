@@ -16,7 +16,8 @@
     "seed": "node ./scripts/seed.js",
     "smoke": "node ./scripts/smoke-test.js",
     "test:e2e": "node ./scripts/e2e-test.js",
-    "test:flow": "node ./scripts/test-human-flow.js"
+    "test:flow": "node ./scripts/test-human-flow.js",
+    "test:api": "node ./scripts/test-api-routes.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
