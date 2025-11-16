@@ -336,10 +336,12 @@ export function PilotRegistrationForm() {
           )}
 
           {/* Navigation Buttons */}
-          <div className="flex justify-between pt-4">
-            <Button type="button" variant="outline" onClick={handleBack} disabled={currentStep === 1 || isSubmitting}>
-              Back
-            </Button>
+          <div className={`flex pt-4 ${currentStep === 1 ? 'justify-end' : 'justify-between'}`}>
+            {currentStep > 1 && (
+              <Button type="button" variant="outline" onClick={handleBack} disabled={isSubmitting}>
+                Back
+              </Button>
+            )}
             {currentStep < 4 ? (
               <Button type="button" onClick={handleNext}>
                 Next

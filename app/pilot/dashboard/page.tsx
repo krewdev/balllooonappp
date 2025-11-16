@@ -185,7 +185,7 @@ export default async function PilotDashboardPage() {
                 <QrCode className="h-5 w-5" />
                 Your Pilot QR Code
               </CardTitle>
-              <CardDescription>Share this QR code with passengers to verify your credentials</CardDescription>
+              <CardDescription>Share this QR code with passengers so they can sign up to receive notifications about your flights</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center">
               <div className="mb-4 rounded-lg border-2 border-primary/20 p-4">

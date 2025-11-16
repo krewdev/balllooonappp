@@ -64,7 +64,7 @@ export default function HowItWorksPage() {
         {/* Value Props */}
         <div className="grid md:grid-cols-3 gap-6 mb-16">
           {[
-            { icon: Sparkles, title: "Build Your List", desc: "One QR code, unlimited passengers", gradient: "from-cyan-500 to-blue-500", shadow: "shadow-cyan-500/50" },
+            { icon: Sparkles, title: "Build Your List", desc: "One QR code lets passengers sign up for notifications", gradient: "from-cyan-500 to-blue-500", shadow: "shadow-cyan-500/50" },
             { icon: Zap, title: "You Control Access", desc: "Notification-only bookings", gradient: "from-purple-500 to-pink-500", shadow: "shadow-purple-500/50" },
             { icon: TrendingUp, title: "Get Paid Fast", desc: "90% goes straight to you", gradient: "from-green-500 to-emerald-500", shadow: "shadow-green-500/50" }
           ].map((item, i) => (
@@ -90,10 +90,10 @@ export default function HowItWorksPage() {
             {[
               { num: 1, title: "Register & Get Approved", desc: "Submit your pilot credentials. Approval in 24-48hrs.", color: "from-cyan-500 to-blue-500", shadow: "shadow-cyan-500/50" },
               { num: 2, title: "Connect Stripe", desc: "Set up payments to receive money directly.", color: "from-green-500 to-emerald-500", shadow: "shadow-green-500/50" },
-              { num: 3, title: "Create Flights", desc: "Add flight details. Payment links auto-generated.", color: "from-purple-500 to-pink-500", shadow: "shadow-purple-500/50" },
-              { num: 4, title: "Notify Passengers", desc: "Select who gets booking links via SMS.", color: "from-orange-500 to-red-500", shadow: "shadow-orange-500/50" },
-              { num: 5, title: "They Book & Pay", desc: "Passengers pay via Stripe. You get 90% instantly.", color: "from-yellow-500 to-amber-500", shadow: "shadow-yellow-500/50" },
-              { num: 6, title: "QR Check-In", desc: "Passengers scan your QR on flight day.", color: "from-teal-500 to-cyan-500", shadow: "shadow-teal-500/50" },
+              { num: 3, title: "Share Your QR Code", desc: "Passengers scan your QR to sign up for notifications.", color: "from-teal-500 to-cyan-500", shadow: "shadow-teal-500/50" },
+              { num: 4, title: "Create Flights", desc: "Add flight details. Payment links auto-generated.", color: "from-purple-500 to-pink-500", shadow: "shadow-purple-500/50" },
+              { num: 5, title: "Notify Passengers", desc: "Select who gets booking links via SMS.", color: "from-orange-500 to-red-500", shadow: "shadow-orange-500/50" },
+              { num: 6, title: "They Book & Pay", desc: "Passengers pay via Stripe. You get 90% instantly.", color: "from-yellow-500 to-amber-500", shadow: "shadow-yellow-500/50" },
               { num: 7, title: "Get Paid", desc: "Money hits your bank in 2-7 days.", color: "from-emerald-500 to-green-500", shadow: "shadow-emerald-500/50" }
             ].map((step) => (
               <div key={step.num} className="flex gap-6 hover:bg-white/5 p-4 rounded-xl transition-all group border-t border-white/10 first:border-0 pt-6 first:pt-0">
