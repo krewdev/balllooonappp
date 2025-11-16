@@ -24,11 +24,13 @@ export function AllPilotsList() {
     try {
       const res = await fetch("/api/admin/pilots", {
         headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN || ''}`,
         },
+        credentials: 'include',
       })
       if (!res.ok) {
-        throw new Error(`Failed to fetch pilots: ${res.statusText}`)
+        const errorData = await res.json().catch(() => ({ error: res.statusText }))
+        throw new Error(errorData.error || `Failed to fetch pilots: ${res.statusText}`)
       }
       const data = await res.json()
       setPilots(data)

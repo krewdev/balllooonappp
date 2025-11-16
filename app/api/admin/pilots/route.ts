@@ -1,16 +1,29 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getServerSession } from '@/lib/sessions'
 
-function isAuthorized(req: Request) {
+async function isAuthorized(req: Request) {
+  // Check for Bearer token first
   const auth = req.headers.get('authorization') || ''
   const adminToken = process.env.ADMIN_TOKEN
-  // If ADMIN_TOKEN is set, require it. Otherwise allow in development for convenience.
-  if (adminToken) return auth === `Bearer ${adminToken}`
+  if (adminToken && auth === `Bearer ${adminToken}`) {
+    return true
+  }
+  
+  // Check for admin session cookie
+  const session = await getServerSession()
+  if (session && session.role === 'admin') {
+    return true
+  }
+  
+  // Allow in development mode
   return process.env.NODE_ENV === 'development'
 }
 
 export async function GET(request: Request) {
-  if (!isAuthorized(request)) {
+  const authorized = await isAuthorized(request)
+  
+  if (!authorized) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
