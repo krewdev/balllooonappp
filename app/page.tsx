@@ -34,7 +34,7 @@ export default function HomePage() {
                 <Link href="/pilot/register">Join as Pilot</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="text-lg">
-                <Link href="/pilot/how-it-works">How It Works</Link>
+                <Link href="/passenger/register">Register as Passenger</Link>
               </Button>
             </div>
           </div>
@@ -123,11 +123,11 @@ export default function HomePage() {
             Join the Flying Hot Air community and bring unforgettable balloon experiences to your customers.
           </p>
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <Button asChild size="lg">
-              <Link href="/pilot/register">Pilot Registration</Link>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/pilot/how-it-works">How It Works</Link>
             </Button>
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/passenger/register">Passenger Sign-Up</Link>
+            <Button asChild size="lg">
+              <Link href="/pilot/login">Pilot Sign In</Link>
             </Button>
           </div>
         </div>
