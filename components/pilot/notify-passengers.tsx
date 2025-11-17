@@ -22,7 +22,11 @@ type Flight = {
   location: string
   priceCents: number
   stripePayLink: string
-  pilot: {
+  pilot?: {
+    fullName: string | null
+    phone: string | null
+  }
+  Pilot?: {
     fullName: string | null
     phone: string | null
   }
@@ -124,7 +128,9 @@ export default function NotifyPassengers({ flightId }: Props) {
   const getPreviewMessage = () => {
     if (!flight) return ""
     
-    const pilotName = flight.pilot.fullName || "Your pilot"
+    // Handle both Pilot (capitalized from API) and pilot (lowercase) formats
+    const pilot = flight.Pilot || flight.pilot
+    const pilotName = pilot?.fullName || "Your pilot"
     const flightDate = new Date(flight.date).toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',

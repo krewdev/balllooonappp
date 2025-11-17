@@ -20,7 +20,15 @@ export async function GET(req: Request) {
       },
     })
 
-    return NextResponse.json(flights)
+    // Serialize Date objects to ISO strings for JSON response
+    const serializedFlights = flights.map(flight => ({
+      ...flight,
+      date: flight.date.toISOString(),
+      createdAt: flight.createdAt.toISOString(),
+      updatedAt: flight.updatedAt.toISOString(),
+    }))
+
+    return NextResponse.json(serializedFlights)
   } catch (err: any) {
     console.error('fetch flights error', err)
     return new NextResponse(JSON.stringify({ error: err.message || String(err) }), { status: 500 })

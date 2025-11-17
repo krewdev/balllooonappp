@@ -25,14 +25,27 @@ export async function GET() {
       return NextResponse.json({ onboarded: false, hasAccount: false });
     }
 
-    const account = await stripe.accounts.retrieve(pilot.stripeAccountId);
+    try {
+      const account = await stripe.accounts.retrieve(pilot.stripeAccountId);
 
-    // An account is considered fully onboarded if charges are enabled.
-    const isOnboarded = account.charges_enabled;
+      // An account is considered fully onboarded if charges are enabled.
+      const isOnboarded = account.charges_enabled;
 
-    return NextResponse.json({ onboarded: isOnboarded, hasAccount: true });
-  } catch (error) {
+      return NextResponse.json({ onboarded: isOnboarded, hasAccount: true });
+    } catch (stripeError: any) {
+      // If Stripe account doesn't exist or is invalid, treat as no account
+      if (stripeError?.code === 'resource_missing' || stripeError?.statusCode === 404) {
+        return NextResponse.json({ onboarded: false, hasAccount: false });
+      }
+      throw stripeError;
+    }
+  } catch (error: any) {
     console.error('Failed to check Stripe account status:', error);
-    return NextResponse.json({ error: 'Failed to retrieve account status' }, { status: 500 });
+    // Return a safe response instead of 500 to prevent UI errors
+    return NextResponse.json({ 
+      onboarded: false, 
+      hasAccount: false,
+      error: process.env.NODE_ENV !== 'production' ? error.message : undefined
+    });
   }
 }

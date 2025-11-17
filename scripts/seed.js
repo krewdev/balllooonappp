@@ -59,6 +59,38 @@ async function main() {
   });
   console.log('Upserted platform fee setting: 10%');
 
+  // Seed rossb029@gmail.com as an approved pilot
+  const rossbPilotPassword = await bcrypt.hash('Balloon', 10);
+  await prisma.pilot.upsert({
+    where: { email: 'rossb029@gmail.com' },
+    update: {
+      passwordHash: rossbPilotPassword,
+      approved: true,
+      fullName: 'Ross B (Pilot)',
+    },
+    create: {
+      id: crypto.randomUUID(),
+      email: 'rossb029@gmail.com',
+      fullName: 'Ross B (Pilot)',
+      phone: faker.phone.number(),
+      passwordHash: rossbPilotPassword,
+      approved: true, // Pre-approved pilot
+      licenseNumber: `CPL-${faker.number.int({ min: 1000, max: 9999 })}`,
+      licenseExpiry: faker.date.future(),
+      yearsExperience: faker.number.int({ min: 5, max: 30 }),
+      totalFlightHours: faker.number.int({ min: 500, max: 5000 }),
+      insuranceProvider: faker.company.name(),
+      insurancePolicyNumber: faker.string.alphanumeric(12).toUpperCase(),
+      insuranceExpiry: faker.date.future(),
+      balloonRegistration: `N${faker.string.alphanumeric(5).toUpperCase()}`,
+      balloonCapacity: faker.number.int({ min: 2, max: 8 }),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      blocked: false,
+    },
+  });
+  console.log('Upserted approved pilot: rossb029@gmail.com (password: Balloon)');
+
   // Seed a specific, predictable pilot for development/testing
   await prisma.pilot.upsert({
     where: { email: 'pilot@example.com' },

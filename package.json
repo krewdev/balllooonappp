@@ -6,18 +6,23 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "dev:seed": "./scripts/start-with-seed.sh",
     "lint": "next lint",
     "start": "next start",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
-    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:migrate:deploy": "prisma migrate deploy && npm run seed",
     "prisma:studio": "prisma studio",
+    "prisma:seed": "node ./scripts/seed.js",
     "seed": "node ./scripts/seed.js",
     "smoke": "node ./scripts/smoke-test.js",
     "test:e2e": "node ./scripts/e2e-test.js",
     "test:flow": "node ./scripts/test-human-flow.js",
     "test:api": "node ./scripts/test-api-routes.js"
+  },
+  "prisma": {
+    "seed": "node ./scripts/seed.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

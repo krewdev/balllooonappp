@@ -82,7 +82,7 @@ export async function middleware(request: NextRequest) {
     "img-src 'self' data: https:",
     "font-src 'self' data:",
     "connect-src 'self' https://api.stripe.com https://*.twilio.com https://vercel.live https://*.vercel.app https://vitals.vercel-insights.com",
-    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
+    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://vercel.live https://*.vercel.app",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

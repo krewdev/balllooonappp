@@ -176,6 +176,12 @@ export default async function PilotDashboardPage() {
                 <span>Transactions</span>
               </Link>
             </Button>
+            <Button variant="outline" asChild className="h-24 flex-col gap-2 col-span-2">
+              <Link href="/pilot/settings">
+                <Settings className="h-6 w-6" />
+                <span>Settings</span>
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 
