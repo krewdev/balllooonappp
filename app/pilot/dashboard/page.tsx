@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { QrCode, Calendar, Settings, PlusCircle } from "lucide-react";
+import { QrCode, Calendar, Settings, PlusCircle, Users } from "lucide-react";
 import Link from "next/link";
 import { BackButton } from "@/components/ui/back-button";
 import { DownloadQR } from "@/components/pilot/download-qr";
@@ -166,7 +166,7 @@ export default async function PilotDashboardPage() {
             </Button>
             <Button variant="outline" asChild className="h-24 flex-col gap-2">
               <Link href="/pilot/passengers">
-                <Settings className="h-6 w-6" />
+                <Users className="h-6 w-6" />
                 <span>Passengers</span>
               </Link>
             </Button>

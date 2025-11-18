@@ -2,10 +2,21 @@
 
 import Link from 'next/link'
 import React, { useState, useEffect } from 'react'
-import { Flight } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Loader2, AlertCircle, Eye, Edit } from 'lucide-react'
+
+type Flight = {
+  id: string
+  title: string
+  description: string | null
+  date: string // ISO string from API
+  location: string
+  priceCents: number
+  maxPassengers: number
+  createdAt: string
+  updatedAt: string
+}
 
 export default function PilotFlightsPage() {
   const [flights, setFlights] = useState<Flight[]>([])

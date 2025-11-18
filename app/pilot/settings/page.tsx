@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { BackButton } from "@/components/ui/back-button"
-import { Loader2, Save, Lock, User } from "lucide-react"
+import { Loader2, Save, Lock, User, CreditCard, CheckCircle2, XCircle, ExternalLink } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 type PilotProfile = {
@@ -42,8 +42,17 @@ export default function PilotSettingsPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [changingPassword, setChangingPassword] = useState(false)
 
+  // Stripe settings state
+  const [stripeStatus, setStripeStatus] = useState<{
+    hasAccount: boolean
+    onboarded: boolean
+    loading: boolean
+  }>({ hasAccount: false, onboarded: false, loading: true })
+  const [stripeLoading, setStripeLoading] = useState(false)
+
   useEffect(() => {
     fetchProfile()
+    fetchStripeStatus()
   }, [])
 
   const fetchProfile = async () => {
@@ -79,6 +88,45 @@ export default function PilotSettingsPage() {
     }
   }
 
+  const fetchStripeStatus = async () => {
+    try {
+      const res = await fetch("/api/pilot/stripe/account", { credentials: "include" })
+      if (res.ok) {
+        const data = await res.json()
+        setStripeStatus({
+          hasAccount: data.hasAccount || false,
+          onboarded: data.onboarded || false,
+          loading: false,
+        })
+      } else {
+        setStripeStatus({ hasAccount: false, onboarded: false, loading: false })
+      }
+    } catch (err) {
+      setStripeStatus({ hasAccount: false, onboarded: false, loading: false })
+    }
+  }
+
+  const handleStripeOnboarding = async () => {
+    setStripeLoading(true)
+    try {
+      const res = await fetch("/api/pilot/stripe/onboarding", {
+        method: "POST",
+        credentials: "include",
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || data.details || "Failed to create Stripe onboarding link")
+      }
+      if (data.url) {
+        window.location.href = data.url
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to start Stripe onboarding")
+    } finally {
+      setStripeLoading(false)
+    }
+  }
+
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
@@ -100,7 +148,24 @@ export default function PilotSettingsPage() {
       }
 
       setSuccess("Profile updated successfully!")
-      setProfile(data.pilot)
+      // Update profile with returned data (API returns { pilot, message })
+      if (data.pilot) {
+        setProfile(data.pilot)
+        setFormData({
+          fullName: data.pilot.fullName || "",
+          phone: data.pilot.phone || "",
+          weightKg: data.pilot.weightKg || "",
+          licenseNumber: data.pilot.licenseNumber || "",
+          licenseExpiry: data.pilot.licenseExpiry ? data.pilot.licenseExpiry.split("T")[0] : "",
+          yearsExperience: data.pilot.yearsExperience || "",
+          totalFlightHours: data.pilot.totalFlightHours || "",
+          insuranceProvider: data.pilot.insuranceProvider || "",
+          insurancePolicyNumber: data.pilot.insurancePolicyNumber || "",
+          insuranceExpiry: data.pilot.insuranceExpiry ? data.pilot.insuranceExpiry.split("T")[0] : "",
+          balloonRegistration: data.pilot.balloonRegistration || "",
+          balloonCapacity: data.pilot.balloonCapacity || "",
+        })
+      }
       setTimeout(() => setSuccess(null), 3000)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update profile")
@@ -345,6 +410,88 @@ export default function PilotSettingsPage() {
                 )}
               </Button>
             </form>
+          </CardContent>
+        </Card>
+
+        {/* Stripe Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CreditCard className="h-5 w-5" />
+              Stripe Payment Settings
+            </CardTitle>
+            <CardDescription>Manage your Stripe account for receiving payments</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {stripeStatus.loading ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Loading Stripe status...</span>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 rounded-lg border">
+                  <div className="flex items-center gap-3">
+                    {stripeStatus.onboarded ? (
+                      <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    ) : (
+                      <XCircle className="h-5 w-5 text-amber-600" />
+                    )}
+                    <div>
+                      <p className="font-medium">
+                        {stripeStatus.onboarded
+                          ? "Stripe Account Connected"
+                          : stripeStatus.hasAccount
+                          ? "Stripe Account Pending"
+                          : "Stripe Account Not Set Up"}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {stripeStatus.onboarded
+                          ? "Your account is fully set up and ready to receive payments"
+                          : stripeStatus.hasAccount
+                          ? "Complete your Stripe onboarding to start receiving payments"
+                          : "Connect your Stripe account to receive payments from passengers"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {!stripeStatus.onboarded && (
+                  <Button
+                    onClick={handleStripeOnboarding}
+                    disabled={stripeLoading}
+                    className="w-full"
+                  >
+                    {stripeLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      <>
+                        {stripeStatus.hasAccount ? "Complete Stripe Setup" : "Connect Stripe Account"}
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                )}
+
+                {stripeStatus.onboarded && (
+                  <p className="text-sm text-muted-foreground">
+                    You can manage your Stripe account settings directly in the{" "}
+                    <a
+                      href="https://dashboard.stripe.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-1"
+                    >
+                      Stripe Dashboard
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </p>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 

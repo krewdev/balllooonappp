@@ -37,7 +37,14 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Pilot not found' }, { status: 404 })
     }
 
-    return NextResponse.json(pilot)
+    // Serialize Date objects to ISO strings
+    const serializedPilot = {
+      ...pilot,
+      licenseExpiry: pilot.licenseExpiry?.toISOString() || null,
+      insuranceExpiry: pilot.insuranceExpiry?.toISOString() || null,
+    }
+
+    return NextResponse.json(serializedPilot)
   } catch (err) {
     console.error('Failed to get pilot profile', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -163,7 +170,14 @@ export async function PATCH(req: Request) {
       },
     })
 
-    return NextResponse.json({ pilot: updatedPilot, message: 'Profile updated successfully' })
+    // Serialize Date objects to ISO strings
+    const serializedPilot = {
+      ...updatedPilot,
+      licenseExpiry: updatedPilot.licenseExpiry?.toISOString() || null,
+      insuranceExpiry: updatedPilot.insuranceExpiry?.toISOString() || null,
+    }
+
+    return NextResponse.json({ pilot: serializedPilot, message: 'Profile updated successfully' })
   } catch (err: any) {
     console.error('Failed to update pilot profile', err)
     return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 })
