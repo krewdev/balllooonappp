@@ -19,10 +19,19 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
     if (!flight) return NextResponse.json({ ok: false, error: 'flight not found' }, { status: 404 })
     if (flight.pilotId !== session.userId) return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 })
 
-    const bookings = await (prisma as any).booking.findMany({
+    const bookings = await prisma.booking.findMany({
       where: { flightId: id },
       orderBy: { createdAt: 'desc' },
-      include: { Passenger: { select: { id: true, email: true, fullName: true, phone: true } } },
+      include: { 
+        Passenger: { 
+          select: { 
+            id: true, 
+            email: true, 
+            fullName: true, 
+            phone: true,
+          },
+        },
+      },
     })
 
     return NextResponse.json({ ok: true, bookings })

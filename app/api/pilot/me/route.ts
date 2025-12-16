@@ -29,6 +29,7 @@ export async function GET(req: Request) {
         fullName: true,
         phone: true,
         stripeAccountId: true,
+        approved: true,
         createdAt: true,
       },
     })
@@ -39,7 +40,7 @@ export async function GET(req: Request) {
     const payload = {
       id: pilot.id,
       name: pilot.fullName || pilot.email,
-      verificationStatus: (pilot as any).approved ? 'approved' : 'pending',
+      verificationStatus: pilot.approved ? 'approved' : 'pending',
       subscriptionStatus: pilot.stripeAccountId ? 'active' : 'none',
       subscriptionTier: 'basic',
       qrCodeUrl: `/api/pilot/qr/${pilot.id}`,

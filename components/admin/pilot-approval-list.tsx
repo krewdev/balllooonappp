@@ -96,12 +96,30 @@ export function PilotApprovalList() {
 
   const handleReject = async (pilotId: string) => {
     setProcessingId(pilotId)
-    // TODO: Implement rejection logic when the API endpoint is ready
-    console.warn("Rejection functionality not yet implemented.")
-    // Simulate API call for now and update UI
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setPilots((prev) => prev.map((p) => (p.id === pilotId ? { ...p, verificationStatus: "rejected" as const } : p)))
-    setProcessingId(null)
+    setError(null)
+    try {
+      const res = await fetch("/api/admin/pilots/reject", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN || ''}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify({ id: pilotId }),
+      })
+
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || "Failed to reject pilot")
+      }
+
+      // Remove the pilot from the list on successful rejection
+      setPilots((prev) => prev.filter((p) => p.id !== pilotId))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unknown error occurred")
+    } finally {
+      setProcessingId(null)
+    }
   }
 
   const pendingPilots = pilots.filter((p) => p.verificationStatus === "pending")

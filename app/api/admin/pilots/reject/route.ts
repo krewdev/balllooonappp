@@ -29,23 +29,32 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { id } = body
+    const { id, reason } = body
     if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
 
-    // Update pilot approval status
+    // Update pilot to mark as rejected (could also delete or set approved: false)
+    // Option 1: Set approved to false and add rejection reason (would require schema change)
+    // Option 2: Delete the pilot (harsh but simple)
+    // Option 3: Keep pilot but mark as rejected (requires new field in schema)
+    
+    // For now, we'll update approved to false and optionally block
     await prisma.pilot.update({ 
       where: { id }, 
       data: { 
-        approved: true,
-        updatedAt: new Date(),
-      },
+        approved: false,
+        blocked: false, // Don't block, just mark as not approved
+      } 
     })
 
-    // Optionally: send email notification to the pilot here (placeholder)
+    // TODO: Optionally send email notification to the pilot with rejection reason
+    // if (reason) {
+    //   await sendRejectionEmail(pilot.email, reason)
+    // }
 
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('Failed to approve pilot', err)
-    return NextResponse.json({ error: 'Failed to approve' }, { status: 500 })
+    console.error('Failed to reject pilot', err)
+    return NextResponse.json({ error: 'Failed to reject' }, { status: 500 })
   }
 }
+

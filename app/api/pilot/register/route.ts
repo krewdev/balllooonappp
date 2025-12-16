@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { email, password, fullName, phone, weightKg, licenseNumber, licenseExpiry } = body
+    const { email, password, fullName, phone, weightLbs, licenseNumber, licenseExpiry } = body
 
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 })
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
         passwordHash,
         fullName: sanitizedFullName || null,
         phone: sanitizedPhone || null,
-        weightKg: weightKg ? parseInt(String(weightKg), 10) : undefined,
+        weightLbs: weightLbs ? parseInt(String(weightLbs), 10) : undefined,
         licenseNumber: sanitizedLicenseNumber || null,
         licenseExpiry: licenseExpiry ? new Date(licenseExpiry) : undefined,
         createdAt: new Date(),

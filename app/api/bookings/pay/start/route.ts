@@ -14,9 +14,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "bookingId required" }, { status: 400 })
     }
 
-    const booking = await (prisma as any).booking.findUnique({
+    const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
-      include: { Flight: true, Passenger: true },
+      include: { 
+        Flight: true, 
+        Passenger: true,
+      },
     })
 
     if (!booking) {
@@ -46,7 +49,10 @@ export async function POST(req: Request) {
     // Determine pilot's connected account (if onboarded)
     let destinationAccount: string | null = null
     if (booking.Flight?.pilotId) {
-      const pilot = await (prisma as any).pilot.findUnique({ where: { id: booking.Flight.pilotId } })
+      const pilot = await prisma.pilot.findUnique({ 
+        where: { id: booking.Flight.pilotId },
+        select: { stripeAccountId: true },
+      })
       destinationAccount = pilot?.stripeAccountId || null
     }
 

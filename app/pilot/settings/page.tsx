@@ -14,7 +14,7 @@ type PilotProfile = {
   email: string
   fullName: string | null
   phone: string | null
-  weightKg: number | null
+  weightLbs: number | null
   licenseNumber: string | null
   licenseExpiry: string | null
   yearsExperience: number | null
@@ -70,7 +70,6 @@ export default function PilotSettingsPage() {
       setFormData({
         fullName: data.fullName || "",
         phone: data.phone || "",
-        weightKg: data.weightKg || "",
         licenseNumber: data.licenseNumber || "",
         licenseExpiry: data.licenseExpiry ? data.licenseExpiry.split("T")[0] : "",
         yearsExperience: data.yearsExperience || "",
@@ -138,7 +137,7 @@ export default function PilotSettingsPage() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       })
 
       const data = await res.json()
@@ -154,7 +153,6 @@ export default function PilotSettingsPage() {
         setFormData({
           fullName: data.pilot.fullName || "",
           phone: data.pilot.phone || "",
-          weightKg: data.pilot.weightKg || "",
           licenseNumber: data.pilot.licenseNumber || "",
           licenseExpiry: data.pilot.licenseExpiry ? data.pilot.licenseExpiry.split("T")[0] : "",
           yearsExperience: data.pilot.yearsExperience || "",
@@ -283,16 +281,6 @@ export default function PilotSettingsPage() {
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="weightKg">Weight (kg)</Label>
-                  <Input
-                    id="weightKg"
-                    type="number"
-                    value={formData.weightKg || ""}
-                    onChange={(e) => setFormData({ ...formData, weightKg: e.target.value ? parseInt(e.target.value) : "" })}
-                  />
-                </div>
               </div>
 
               <div className="border-t pt-6">
@@ -323,7 +311,7 @@ export default function PilotSettingsPage() {
                       id="yearsExperience"
                       type="number"
                       value={formData.yearsExperience || ""}
-                      onChange={(e) => setFormData({ ...formData, yearsExperience: e.target.value ? parseInt(e.target.value) : "" })}
+                      onChange={(e) => setFormData({ ...formData, yearsExperience: e.target.value ? parseInt(e.target.value) : null })}
                     />
                   </div>
 
@@ -333,7 +321,7 @@ export default function PilotSettingsPage() {
                       id="totalFlightHours"
                       type="number"
                       value={formData.totalFlightHours || ""}
-                      onChange={(e) => setFormData({ ...formData, totalFlightHours: e.target.value ? parseInt(e.target.value) : "" })}
+                      onChange={(e) => setFormData({ ...formData, totalFlightHours: e.target.value ? parseInt(e.target.value) : null })}
                     />
                   </div>
                 </div>
@@ -390,7 +378,7 @@ export default function PilotSettingsPage() {
                       id="balloonCapacity"
                       type="number"
                       value={formData.balloonCapacity || ""}
-                      onChange={(e) => setFormData({ ...formData, balloonCapacity: e.target.value ? parseInt(e.target.value) : "" })}
+                      onChange={(e) => setFormData({ ...formData, balloonCapacity: e.target.value ? parseInt(e.target.value) : null })}
                     />
                   </div>
                 </div>

@@ -27,8 +27,11 @@ export async function POST(req: Request) {
     }
 
     // Capacity check (count non-canceled bookings)
-  const existingCount = await (prisma as any).booking.count({
-      where: { flightId, NOT: { status: 'canceled' } },
+    const existingCount = await prisma.booking.count({
+      where: { 
+        flightId,
+        status: { not: 'canceled' },
+      },
     })
     if (existingCount >= flight.maxPassengers) {
       return NextResponse.json({ ok: false, error: 'flight full' }, { status: 409 })
@@ -56,12 +59,18 @@ export async function POST(req: Request) {
     })
 
     // Prevent duplicate booking for same flight/passenger
-  const dup = await (prisma as any).booking.findFirst({ where: { flightId, passengerId: passenger.id, NOT: { status: 'canceled' } } })
+    const dup = await prisma.booking.findFirst({ 
+      where: { 
+        flightId, 
+        passengerId: passenger.id, 
+        status: { not: 'canceled' },
+      },
+    })
     if (dup) {
       return NextResponse.json({ ok: true, bookingId: dup.id, duplicate: true })
     }
 
-  const booking = await (prisma as any).booking.create({
+    const booking = await prisma.booking.create({
       data: {
         id: crypto.randomUUID(),
         flightId,

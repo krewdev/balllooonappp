@@ -82,7 +82,7 @@ model Passenger {
   passwordHash       String?
   fullName           String?
   phone              String
-  weightKg           Int?
+  weightLbs          Int?
   location           String
   maxDistance        Int?
   emailNotifications Boolean   @default(true)
@@ -107,7 +107,7 @@ model Pilot {
   passwordHash          String?
   fullName              String?
   phone                 String?
-  weightKg              Int?
+  weightLbs             Int?
   licenseNumber         String?
   licenseExpiry         DateTime?
   yearsExperience       Int?

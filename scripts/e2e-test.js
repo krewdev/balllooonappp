@@ -28,7 +28,7 @@ const testData = {
     password: 'TestPilot123!',
     fullName: 'Test Pilot E2E',
     phone: '+14155551234',
-    weightKg: 80,
+    weightLbs: 176, // ~80kg
     licenseNumber: 'E2E-TEST-123',
     licenseExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
     yearsExperience: 5,

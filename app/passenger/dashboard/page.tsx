@@ -145,12 +145,7 @@ export default async function PassengerDashboardPage() {
             </div>
             <div>
               <h4 className="font-semibold">Weight</h4>
-                {
-                  (() => {
-                    const weightLbs = passenger.weightKg ? Math.round(passenger.weightKg / 0.453592) : null
-                    return weightLbs ? <p>{weightLbs} lbs</p> : <p>—</p>
-                  })()
-                }
+              {passenger.weightLbs ? <p>{passenger.weightLbs} lbs</p> : <p>—</p>}
             </div>
           </CardContent>
         </Card>

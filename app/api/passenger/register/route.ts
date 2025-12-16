@@ -76,8 +76,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Convert lbs to kg for storage (1 lb = 0.453592 kg)
-    const weightKg = Math.round(parseFloat(weightLbs) * 0.453592);
+    // Store weight in pounds directly
+    const weightLbsNum = Math.round(parseFloat(weightLbs));
 
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
         fullName: sanitizedFullName,
         email: validatedEmail,
         passwordHash,
-        weightKg,
+        weightLbs: weightLbsNum,
         phone: validatedPhone,
         location: validatedZipCode,
         pilotId: pilotId || null,

@@ -20,7 +20,7 @@ export async function GET(req: Request) {
         email: true,
         fullName: true,
         phone: true,
-        weightKg: true,
+        weightLbs: true,
         licenseNumber: true,
         licenseExpiry: true,
         yearsExperience: true,
@@ -64,7 +64,7 @@ export async function PATCH(req: Request) {
     const {
       fullName,
       phone,
-      weightKg,
+      weightLbs,
       licenseNumber,
       licenseExpiry,
       yearsExperience,
@@ -93,12 +93,12 @@ export async function PATCH(req: Request) {
       updateData.phone = validatedPhone
     }
 
-    if (weightKg !== undefined) {
-      const validatedWeight = validateNumber(weightKg, 1, 1000)
+    if (weightLbs !== undefined) {
+      const validatedWeight = validateNumber(weightLbs, 1, 2000)
       if (validatedWeight === null) {
         return NextResponse.json({ error: 'Invalid weight' }, { status: 400 })
       }
-      updateData.weightKg = Math.round(validatedWeight)
+      updateData.weightLbs = Math.round(validatedWeight)
     }
 
     if (licenseNumber !== undefined) {
@@ -157,7 +157,7 @@ export async function PATCH(req: Request) {
         email: true,
         fullName: true,
         phone: true,
-        weightKg: true,
+        weightLbs: true,
         licenseNumber: true,
         licenseExpiry: true,
         yearsExperience: true,

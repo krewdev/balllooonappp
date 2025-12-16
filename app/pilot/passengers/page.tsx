@@ -46,9 +46,6 @@ export default async function PilotPassengersPage() {
           ) : (
             <div className="space-y-4">
               {passengers.map(p => {
-                // Convert kg back to lbs for display
-                const weightLbs = p.weightKg ? Math.round(p.weightKg / 0.453592) : null;
-                
                 return (
                   <div key={p.id} className="flex items-center justify-between p-4 rounded-lg border">
                     <div className="flex items-center space-x-4">
@@ -64,7 +61,7 @@ export default async function PilotPassengersPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">ZIP: {p.location}</p>
-                      {weightLbs && <p className="text-sm text-muted-foreground">Weight: {weightLbs} lbs</p>}
+                      {p.weightLbs && <p className="text-sm text-muted-foreground">Weight: {p.weightLbs} lbs</p>}
                       <p className="text-xs text-muted-foreground">Registered: {new Date(p.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>

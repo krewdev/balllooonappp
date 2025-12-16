@@ -18,7 +18,7 @@ export async function POST(
     const phoneNorm = phone.replace(/\D/g, "")
 
     // Find matching paid booking by passenger last name + phone
-    const booking = await (prisma as any).booking.findFirst({
+    const booking = await prisma.booking.findFirst({
       where: {
         flightId,
         paid: true,
@@ -26,7 +26,10 @@ export async function POST(
           phone: { contains: phoneNorm },
         },
       },
-      include: { Passenger: true, Flight: true },
+      include: { 
+        Passenger: true, 
+        Flight: true,
+      },
     })
 
     if (!booking) {

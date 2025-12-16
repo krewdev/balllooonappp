@@ -32,7 +32,7 @@ const testData = {
     password: 'PilotTest123!',
     fullName: 'John Pilot',
     phone: '+14155551234',
-    weightKg: 80,
+    weightLbs: 176, // ~80kg
     licenseNumber: `LIC-${timestamp}`,
     licenseExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     yearsExperience: 10,
