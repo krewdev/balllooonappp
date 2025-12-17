@@ -46,7 +46,7 @@ export async function POST(req: Request) {
 
     // Create an account link for onboarding
     const returnUrl = new URL('/pilot/dashboard', req.url).toString()
-    const refreshUrl = new URL('/pilot/subscription', req.url).toString() // Re-visit this page on failure
+    const refreshUrl = new URL('/pilot/settings', req.url).toString() // Re-visit settings page on failure
 
     accountLink = await stripe.accountLinks.create({
       account: accountId,

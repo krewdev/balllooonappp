@@ -1,14 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getStripe, PILOT_SUBSCRIPTION_PRICES, MEISTER_SERVICE_PRICES } from "@/lib/stripe"
+import { getStripe, MEISTER_SERVICE_PRICES } from "@/lib/stripe"
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { type, tier, billingPeriod, userId, email } = body
 
+    if (type !== "meister") {
+      return NextResponse.json({ error: "Invalid payment type. Only meister payments are supported." }, { status: 400 })
+    }
+
     const sessionConfig: any = {
       payment_method_types: ["card"],
-      mode: type === "pilot" ? "subscription" : "payment",
+      mode: "payment",
       success_url: `${request.nextUrl.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${request.nextUrl.origin}/cancel`,
       customer_email: email,
@@ -19,30 +23,7 @@ export async function POST(request: NextRequest) {
       },
     }
 
-    if (type === "pilot") {
-      // Pilot subscription
-      const price =
-        billingPeriod === "yearly"
-          ? PILOT_SUBSCRIPTION_PRICES[tier as keyof typeof PILOT_SUBSCRIPTION_PRICES].yearly
-          : PILOT_SUBSCRIPTION_PRICES[tier as keyof typeof PILOT_SUBSCRIPTION_PRICES].monthly
-
-      sessionConfig.line_items = [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: `AeroConnect ${tier.charAt(0).toUpperCase() + tier.slice(1)} Plan`,
-              description: `${tier.charAt(0).toUpperCase() + tier.slice(1)} pilot subscription - ${billingPeriod}`,
-            },
-            unit_amount: price,
-            recurring: {
-              interval: billingPeriod === "yearly" ? "year" : "month",
-            },
-          },
-          quantity: 1,
-        },
-      ]
-    } else if (type === "meister") {
+    if (type === "meister") {
       // Meister one-time payment
       const price = MEISTER_SERVICE_PRICES[tier as keyof typeof MEISTER_SERVICE_PRICES]
 

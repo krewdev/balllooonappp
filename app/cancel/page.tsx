@@ -18,7 +18,7 @@ export default function CancelPage() {
               <Link href="/">Go Home</Link>
             </Button>
             <Button asChild>
-              <Link href="/pilot/subscription">Try Again</Link>
+              <Link href="/pilot/dashboard">Go to Dashboard</Link>
             </Button>
           </div>
         </CardContent>

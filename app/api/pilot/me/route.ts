@@ -41,8 +41,6 @@ export async function GET(req: Request) {
       id: pilot.id,
       name: pilot.fullName || pilot.email,
       verificationStatus: pilot.approved ? 'approved' : 'pending',
-      subscriptionStatus: pilot.stripeAccountId ? 'active' : 'none',
-      subscriptionTier: 'basic',
       qrCodeUrl: `/api/pilot/qr/${pilot.id}`,
       totalFlights: 0,
       recentActivity: [],

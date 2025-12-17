@@ -9,7 +9,6 @@ export default function AdminDashboardPage() {
     totalPassengers: 2847,
     totalMeisters: 23,
     monthlyRevenue: 45600,
-    activeSubscriptions: 144,
   }
 
   return (
@@ -61,7 +60,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${stats.monthlyRevenue.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">{stats.activeSubscriptions} active subscriptions</p>
+            <p className="text-xs text-muted-foreground">From flight bookings</p>
           </CardContent>
         </Card>
       </div>
@@ -95,7 +94,7 @@ export default function AdminDashboardPage() {
         <Card className="cursor-pointer transition-all hover:border-primary hover:shadow-lg">
           <CardHeader>
             <CardTitle>Payment Reports</CardTitle>
-            <CardDescription>View subscription and payment analytics</CardDescription>
+            <CardDescription>View payment analytics and transactions</CardDescription>
           </CardHeader>
           <CardContent>
             <a href="/admin/payments" className="text-sm font-medium text-primary hover:underline">

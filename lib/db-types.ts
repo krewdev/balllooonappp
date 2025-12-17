@@ -4,10 +4,6 @@ export type UserRole = "pilot" | "passenger" | "meister" | "admin"
 
 export type VerificationStatus = "pending" | "approved" | "rejected"
 
-export type SubscriptionStatus = "active" | "inactive" | "cancelled"
-
-export type SubscriptionTier = "basic" | "premium"
-
 export type ServiceTier = "basic" | "premium" | "vip"
 
 export type PaymentStatus = "pending" | "paid" | "failed"
@@ -43,10 +39,6 @@ export interface Pilot {
   total_flight_hours: number
   verification_status: VerificationStatus
   qr_code_url: string | null
-  subscription_status: SubscriptionStatus
-  subscription_tier: SubscriptionTier | null
-  stripe_customer_id: string | null
-  stripe_subscription_id: string | null
   created_at: Date
   updated_at: Date
 }
