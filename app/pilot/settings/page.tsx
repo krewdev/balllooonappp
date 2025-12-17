@@ -14,7 +14,7 @@ type PilotProfile = {
   email: string
   fullName: string | null
   phone: string | null
-  weightKg: number | null
+  weightLbs: number | null
   licenseNumber: string | null
   licenseExpiry: string | null
   yearsExperience: number | null
@@ -70,7 +70,6 @@ export default function PilotSettingsPage() {
       setFormData({
         fullName: data.fullName || "",
         phone: data.phone || "",
-        weightKg: data.weightKg || "",
         licenseNumber: data.licenseNumber || "",
         licenseExpiry: data.licenseExpiry ? data.licenseExpiry.split("T")[0] : "",
         yearsExperience: data.yearsExperience || "",
@@ -154,7 +153,6 @@ export default function PilotSettingsPage() {
         setFormData({
           fullName: data.pilot.fullName || "",
           phone: data.pilot.phone || "",
-          weightKg: data.pilot.weightKg || "",
           licenseNumber: data.pilot.licenseNumber || "",
           licenseExpiry: data.pilot.licenseExpiry ? data.pilot.licenseExpiry.split("T")[0] : "",
           yearsExperience: data.pilot.yearsExperience || "",
@@ -281,16 +279,6 @@ export default function PilotSettingsPage() {
                     placeholder="+1234567890"
                     value={formData.phone || ""}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="weightKg">Weight (kg)</Label>
-                  <Input
-                    id="weightKg"
-                    type="number"
-                    value={formData.weightKg || ""}
-                    onChange={(e) => setFormData({ ...formData, weightKg: e.target.value ? parseInt(e.target.value) : "" })}
                   />
                 </div>
               </div>
